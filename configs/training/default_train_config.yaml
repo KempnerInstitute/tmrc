@@ -1,0 +1,42 @@
+defaults:
+  - _self_
+
+datasets:
+  name: algebraic-stack
+    path: /home/nikhilanand/algebraic-stack
+
+model:
+  _target_: Cfg
+  n_heads: 8
+  d_model: 2048
+  n_layer: 8
+  dropout_p: 0.0
+  vocab_size: #...
+  ctx_len: 
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 0.0001
+  weight_decay: 0.01
+  betas: [0.9, 0.999]
+  eps: 1e-8
+
+# scheduler:
+#   _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+#   T_max: 1000
+#   eta_min: 1e-6
+
+training:
+  epochs: 1
+  batch_size: 2048
+  log_interval: 500
+  shuffle: True
+  save_model: True
+  save_model_path: /home/nikhilanand/Research/model_checkpoints
+  use_oracle: False
+
+wandb_log:
+  name: tmrc_dev_log202408
+
+HydraConf:
+  version_base: "1.1"
