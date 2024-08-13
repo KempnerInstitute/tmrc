@@ -4,7 +4,7 @@ name: Deploy Documentation to GitHub Pages
 on:
   push:
     branches:
-      - develop 
+      - develop
 
 jobs:
   deploy:
@@ -27,6 +27,9 @@ jobs:
       run: |
         cd docs
         touch .nojekyll
+        touch source/.nojekyll
+        mkdir _build
+        mkdir _build/html
         touch _build/html/.nojekyll
         make html
 
