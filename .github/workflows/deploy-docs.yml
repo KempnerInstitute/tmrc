@@ -4,7 +4,7 @@ name: Deploy Documentation to GitHub Pages
 on:
   push:
     branches:
-      - iss3_doc 
+      - develop
 
 jobs:
   deploy:
