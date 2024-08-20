@@ -4,6 +4,7 @@ defaults:
 datasets:
   name: algebraic-stack
     path: /home/nikhilanand/algebraic-stack
+  tokenizer_used: t5-base
 
 model:
   _target_: Cfg
@@ -11,8 +12,8 @@ model:
   d_model: 2048
   n_layer: 8
   dropout_p: 0.0
-  vocab_size: #...
-  ctx_len: 
+  ctx_len: 512
+  weight_precision: bfloat16
 
 optimizer:
   _target_: torch.optim.AdamW
@@ -20,6 +21,7 @@ optimizer:
   weight_decay: 0.01
   betas: [0.9, 0.999]
   eps: 1e-8
+  precision: float32
 
 # scheduler:
 #   _target_: torch.optim.lr_scheduler.CosineAnnealingLR
@@ -28,11 +30,12 @@ optimizer:
 
 training:
   epochs: 1
+  train_steps: 500 # do whatever is larger, train_steps or epoch
   batch_size: 2048
   log_interval: 500
   shuffle: True
   save_model: True
-  save_model_path: /home/nikhilanand/Research/model_checkpoints
+  artifacts_path: /home/nikhilanand/Research/artifacts
   use_oracle: False
 
 wandb_log:
