@@ -4,7 +4,7 @@ from olmo.torch_util import barrier, get_global_rank, get_world_size
 
 from torch.utils.data import DataLoader, DistributedSampler
 from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, TypeVar
 from glob import glob
 from pathlib import Path
 import torch
@@ -18,10 +18,11 @@ from torch.nn.attention.flex_attention import (
     flex_attention,
 )
 
-from utils import build_memmap_dataset, build_train_dataloader
+from utils import build_memmap_dataset, build_train_dataloader, move_to_device
 
+flex_attention = torch.compile(flex_attention, dynamic = False)
 
-global_train_batch_size = 2
+global_train_batch_size = 1
 device_train_microbatch_size = 8
 device_train_batch_size = global_train_batch_size // get_world_size()
 pad_direction = "right"
@@ -60,26 +61,49 @@ def main():
         save_overwrite = True,
     )
 
+    
+
     for idx, batch in enumerate(train_loader):
-        if idx == 2:
-            print(batch["input_ids"].shape)
+        if idx == 5:
+            batch = move_to_device(batch, "cuda")
             input_ids=batch["input_ids"],
-            print(input_ids)
             attention_mask=batch.get("attention_mask"),
-            print(attention_mask)
             attention_bias=batch.get("attention_bias"),
-            print(attention_bias)
             doc_lens=batch.get("doc_lens"),
+            print("DOCUMENT LENGTHS: ")
             print(doc_lens)
             max_doc_lens=batch.get("max_doc_lens"),
-            print(max_doc_lens)
 
-    batch_doc_lens = doc_lens[0].masked_select(doc_lens[0] != 0)
+            doc_lens = doc_lens[0].masked_select(doc_lens[0] != 0)
+            doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(doc_lens)]).reshape(max_seq_len)
 
-    print(batch_doc_lens)
+            doc_mask = move_to_device(doc_mask, "cuda")
 
-    batch_doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(batch_doc_lens)]).reshape(device_train_batch_size, max_seq_len)
-    print(batch_doc_mask)
+
+            def document_causal_mask(b, h, q_idx, kv_idx):
+                causal_mask = q_idx >= kv_idx
+                document_mask = doc_mask[q_idx] == doc_mask[kv_idx]
+                return causal_mask & document_mask
+            
+            block_mask = create_block_mask(document_causal_mask, 1, 1, max_seq_len, max_seq_len, device="cuda")
+            print(f"\nBlock Mask:\n{block_mask}")
+            print(block_mask.mask_mod)
+
+            # flex_ms = flex_attention(
+            #         query, key, value, score_mod=score_mod, block_mask=block_mask
+            #     )
+
+            # batch_doc_lens = doc_lens[0].masked_select(doc_lens[0] != 0)
+
+            # print(batch_doc_lens)
+
+            # batch_doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(batch_doc_lens)]).reshape(device_train_batch_size, max_seq_len)
+            # print(batch_doc_mask)
+            # print(batch_doc_mask.unique(return_counts = True))
+            # print(batch_doc_mask[0].unique(return_counts = True))
+
+
+
 
 if __name__ == "__main__":
     main()

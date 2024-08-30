@@ -4,12 +4,14 @@ from olmo.torch_util import barrier, get_global_rank, get_world_size
 
 from torch.utils.data import DataLoader, DistributedSampler
 from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast, TypeVar
 from glob import glob
 from pathlib import Path
 import torch
 
 import numpy as np
+
+T = TypeVar("T")
 
 
 # Arguments messy until we decide what to keep and discard from olmo config format
@@ -119,3 +121,16 @@ def build_train_dataloader(
         persistent_workers=False if num_workers == 0 else persistent_workers,
         timeout=timeout,
     )
+
+
+def move_to_device(o: T, device: torch.device) -> T:
+    if isinstance(o, torch.Tensor):
+        return o.to(device)  # type: ignore[return-value]
+    elif isinstance(o, dict):
+        return {k: move_to_device(v, device) for k, v in o.items()}  # type: ignore[return-value]
+    elif isinstance(o, list):
+        return [move_to_device(x, device) for x in o]  # type: ignore[return-value]
+    elif isinstance(o, tuple):
+        return tuple((move_to_device(x, device) for x in o))  # type: ignore[return-value]
+    else:
+        return o
