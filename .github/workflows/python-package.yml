@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - develop
+      - iss9_unittest
   pull_request:
     branches:
       - main
