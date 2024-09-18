@@ -1,0 +1,21 @@
+defaults:
+  - _self_
+
+test_data:
+  path: /n/holylfs06/LABS/kempner_shared/Lab/data/c4_original/preprocessed/t5-base/c4_en_validation/part-0.00000.npy
+
+model:
+  _target_: Cfg
+  n_head: 8
+  d_model: 2048
+  n_layer: 8
+  dropout_p: 0.0
+  context_length: 512
+  weight_precision: bfloat16
+  mlp_scale_factor: 4
+  bias: False
+  activation: relu
+
+tokenizer:
+  name: t5-base
+  vocab_size: 32128

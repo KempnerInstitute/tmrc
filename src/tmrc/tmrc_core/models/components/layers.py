@@ -1,4 +1,4 @@
-from . import register_activation
+from ...utils.registry import register_activation
 import torch.nn.functional as F
 
 

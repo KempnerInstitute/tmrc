@@ -5,6 +5,7 @@ from torch.nn import functional as F
 
 from . import ACTIVATION_REGISTRY
 
+
 class CausalSelfAttention(nn.Module):
     """
     A simple adapation of vanilla self attention head with a causal mask.
@@ -13,20 +14,20 @@ class CausalSelfAttention(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        assert config.d_model % config.n_heads==0
-        self.c_attn = nn.Linear(config.d_model, 3*config.d_model, bias=config.attn_bias) # easier to do K,V,Q at once
-        self.c_proj = nn.Linear(config.d_model, config.d_model)
-        self.attn_dropout = nn.Dropout(config.attn_dropout_p)
-        self.proj_dropout = nn.Dropout(config.proj_dropout_p)
+        assert config.model.d_model % config.model.n_head==0
+        self.c_attn = nn.Linear(config.model.d_model, 3*config.model.d_model, bias=config.model.bias) # easier to do K,V,Q at once
+        self.c_proj = nn.Linear(config.model.d_model, config.model.d_model)
+        self.attn_dropout = nn.Dropout(config.model.dropout_p)
+        self.proj_dropout = nn.Dropout(config.model.dropout_p)
         
-        self.d_model = config.d_model
-        self.n_heads = config.n_heads
+        self.d_model = config.model.d_model
+        self.n_heads = config.model.n_head
 
         self.flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
         if not self.flash:
             print("Warning: flash attention not found (torch >= 2.0)")
             self.register_buffer("causal_mask",
-                                 torch.tril(torch.ones(config.ctx_len, config.ctx_len)).view(1, 1, config.ctx_len, config.ctx_len))
+                                 torch.tril(torch.ones(config.model.context_length, config.model.context_length)).view(1, 1, config.model.context_length, config.model.context_length))
 
     def forward(self, x):
         # x: (B, T, C)
@@ -56,10 +57,10 @@ class MLP(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.c_fc    = nn.Linear(config.d_model, config.mlp_scale_factor * config.d_model, bias=config.mlp_bias)
-        self.activation = ACTIVATION_REGISTRY.get(config.activation)
-        self.c_proj  = nn.Linear(config.mlp_scale_factor * config.d_model, config.d_model, bias=config.mlp_bias)
-        self.dropout = nn.Dropout(config.mlp_dropout)
+        self.c_fc    = nn.Linear(config.model.d_model, config.model.mlp_scale_factor * config.model.d_model, bias=config.model.bias)
+        self.activation = ACTIVATION_REGISTRY.get(config.model.activation)
+        self.c_proj  = nn.Linear(config.model.mlp_scale_factor * config.model.d_model, config.model.d_model, bias=config.model.bias)
+        self.dropout = nn.Dropout(config.model.dropout_p)
     
     def forward(self, x):
         x = self.c_fc(x)
@@ -73,9 +74,9 @@ class Block(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.d_model)
+        self.ln_1 = nn.LayerNorm(config.model.d_model)
         self.attn = CausalSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.d_model)
+        self.ln_2 = nn.LayerNorm(config.model.d_model)
         self.mlp = MLP(config)
     
     def forward(self, x):

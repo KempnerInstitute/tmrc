@@ -2,9 +2,10 @@ import torch
 
 import torch.nn as nn
 from torch.nn import functional as F
-from components import decoder
+from .components import decoder
 
-from utils.platform import Platform, auto_device
+from ..utils import platform, registry
+#from utils.platform import Platform, auto_device
 
 
 class GPT(nn.Module):
@@ -15,10 +16,11 @@ class GPT(nn.Module):
         - validate config
         - simplify optimization, fuse optimizer step into backward pass [TO DO]
         - simplify overall class, e.g., no longer use GPT weight init
-        - using the `Platform` class to manage distributed training
+        - using the `Platform` class to manage device training
+        - move FlashAttention -> FlexAttention [TO DO]
     """
 
-    def __init__(self, config, platform: Platform):
+    def __init__(self, config, platform: platform.Platform):
         super().__init__()
         GPT.validate_config(config)
 
@@ -26,22 +28,22 @@ class GPT(nn.Module):
         self.platform = platform
 
         self.transformer = nn.ModuleDict(dict(
-            wte = nn.Embedding(config.vocab_size, config.d_model),
-            wpe = nn.Embedding(config.ctx_len, config.d_model),
-            drop = nn.Dropout(config.dropout),
-            h = nn.ModuleList([decoder.Block(config) for _ in range(config.n_layer)]),
-            ln_f = nn.LayerNorm(config.d_model, bias=config.bias),
+            wte = nn.Embedding(config.tokenizer.vocab_size, config.model.d_model),
+            wpe = nn.Embedding(config.model.context_length, config.model.d_model),
+            drop = nn.Dropout(config.model.dropout_p),
+            h = nn.ModuleList([decoder.Block(config) for _ in range(config.model.n_layer)]),
+            ln_f = nn.LayerNorm(config.model.d_model, bias=config.model.bias),
         ))
-        self.lm_head = nn.Linear(config.d_model, config.vocab_size, bias=False)
+        self.lm_head = nn.Linear(config.model.d_model, config.tokenizer.vocab_size, bias=False)
         self.loss_criterion = nn.CrossEntropyLoss()
 
     @staticmethod
     def validate_config(config):
         """Some basic sanity checks for the model config."""
 
-        assert config.vocab_size is not None
-        assert config.context_length is not None
-        assert config.d_model % config.n_head == 0, "d_model must be divisible by n_head"
+        assert config.tokenizer.vocab_size is not None
+        assert config.model.context_length is not None
+        assert config.model.d_model % config.model.n_head == 0, "d_model must be divisible by n_head"
 
     def get_num_params(self, non_embedding=False):
         """Get total parameter count."""
@@ -50,11 +52,11 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
     
-    @auto_device
+    @platform.auto_device
     def forward(self, idx, targets=None):
         
         B, T = idx.shape
-        assert T <= self.config.ctx_len, f"Sequence length {T} > context length {self.config.ctx_len}"
+        assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
 
         pos = torch.arange(0, T, dtype=torch.long) # (T)
         

@@ -20,3 +20,7 @@ class Registry:
     
     def list_keys(self):
         return list(self._registry.keys())
+    
+"""Activation registry"""
+ACTIVATION_REGISTRY = Registry("activations")
+register_activation = ACTIVATION_REGISTRY.register
