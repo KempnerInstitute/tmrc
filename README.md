@@ -1,3 +1,14 @@
+
+<p align="center">
+  <a href="https://github.com/KempnerInstitute/tmrc/actions/workflows/deploy-docs.yml">
+    <img src="https://github.com/KempnerInstitute/tmrc/actions/workflows/deploy-docs.yml/badge.svg?branch=develop" alt="docs">
+  </a>
+  <a href="https://github.com/KempnerInstitute/tmrc/actions/workflows/python-package.yml">
+    <img src="https://github.com/KempnerInstitute/tmrc/actions/workflows/python-package.yml/badge.svg" alt="tests">
+  </a>
+</p>
+
+
 # tmrc
 
 _Transformer model research codebase_
