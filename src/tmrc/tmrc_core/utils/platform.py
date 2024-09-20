@@ -78,19 +78,3 @@ class Platform:
             return f'cuda:{device_ids}'
         else:
             return 'cpu'
-        
-def auto_device(func: Callable) -> Callable:
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        if not hasattr(self, 'platform'):
-            raise AttributeError("Model must have a 'platform' to run on")
-
-        args = self.platform.to_device(args)
-        kwargs = self.platform.to_device(kwargs)
-
-        self.to(self.platform.get_device())
-
-        output = func(self, *args, **kwargs)
-
-        return self.platform.to_device(output)
-    return wrapper

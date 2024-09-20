@@ -32,9 +32,9 @@ class GPT(nn.Module):
             wpe = nn.Embedding(config.model.context_length, config.model.d_model),
             drop = nn.Dropout(config.model.dropout_p),
             h = nn.ModuleList([decoder.Block(config) for _ in range(config.model.n_layer)]),
-            ln_f = nn.LayerNorm(config.model.d_model, bias=config.model.bias),
+            ln_f = nn.LayerNorm(config.model.d_model, bias=config.model.ln_bias),
         ))
-        self.lm_head = nn.Linear(config.model.d_model, config.tokenizer.vocab_size, bias=False)
+        self.lm_head = nn.Linear(config.model.d_model, config.tokenizer.vocab_size, bias=config.model.cls_head_bias)
         self.loss_criterion = nn.CrossEntropyLoss()
 
     @staticmethod
@@ -52,13 +52,12 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
     
-    @platform.auto_device
     def forward(self, idx, targets=None):
         
         B, T = idx.shape
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
 
-        pos = torch.arange(0, T, dtype=torch.long) # (T)
+        pos = self.platform.move_to_device(torch.arange(0, T, dtype=torch.long), device_index=0) # (T)
         
         tok_emb = self.transformer.wte(idx) # (B, T, C)
         pos_emb = self.transformer.wpe(pos) # (B, T, C)

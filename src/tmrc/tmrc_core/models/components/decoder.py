@@ -15,8 +15,8 @@ class CausalSelfAttention(nn.Module):
     def __init__(self, config):
         super().__init__()
         assert config.model.d_model % config.model.n_head==0
-        self.c_attn = nn.Linear(config.model.d_model, 3*config.model.d_model, bias=config.model.bias) # easier to do K,V,Q at once
-        self.c_proj = nn.Linear(config.model.d_model, config.model.d_model)
+        self.c_attn = nn.Linear(config.model.d_model, 3*config.model.d_model, bias=config.model.attn_bias) # easier to do K,V,Q at once
+        self.c_proj = nn.Linear(config.model.d_model, config.model.d_model, bias=config.model.proj_bias)
         self.attn_dropout = nn.Dropout(config.model.dropout_p)
         self.proj_dropout = nn.Dropout(config.model.dropout_p)
         
@@ -57,9 +57,9 @@ class MLP(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.c_fc    = nn.Linear(config.model.d_model, config.model.mlp_scale_factor * config.model.d_model, bias=config.model.bias)
+        self.c_fc    = nn.Linear(config.model.d_model, config.model.mlp_scale_factor * config.model.d_model, bias=config.model.mlp_bias)
         self.activation = ACTIVATION_REGISTRY.get(config.model.activation)
-        self.c_proj  = nn.Linear(config.model.mlp_scale_factor * config.model.d_model, config.model.d_model, bias=config.model.bias)
+        self.c_proj  = nn.Linear(config.model.mlp_scale_factor * config.model.d_model, config.model.d_model, bias=config.model.mlp_bias)
         self.dropout = nn.Dropout(config.model.dropout_p)
     
     def forward(self, x):
@@ -74,9 +74,9 @@ class Block(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.ln_1 = nn.LayerNorm(config.model.d_model)
+        self.ln_1 = nn.LayerNorm(config.model.d_model, bias=config.model.ln_bias)
         self.attn = CausalSelfAttention(config)
-        self.ln_2 = nn.LayerNorm(config.model.d_model)
+        self.ln_2 = nn.LayerNorm(config.model.d_model, bias=config.model.ln_bias)
         self.mlp = MLP(config)
     
     def forward(self, x):
