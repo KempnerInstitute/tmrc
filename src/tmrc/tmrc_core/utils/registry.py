@@ -24,3 +24,8 @@ class Registry:
 """Activation registry"""
 ACTIVATION_REGISTRY = Registry("activations")
 register_activation = ACTIVATION_REGISTRY.register
+
+
+"""Optimizer registry"""
+OPTIMIZER_REGISTRY = Registry("optimizers")
+register_optimizer = OPTIMIZER_REGISTRY.register

@@ -1,2 +1,2 @@
 from . import layers
-from ...utils.registry import ACTIVATION_REGISTRY
+from ...utils.registry import ACTIVATION_REGISTRY, OPTIMIZER_REGISTRY
