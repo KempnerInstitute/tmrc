@@ -37,6 +37,10 @@ class GPT(nn.Module):
         self.lm_head = nn.Linear(config.model.d_model, config.tokenizer.vocab_size, bias=config.model.cls_head_bias)
         self.loss_criterion = nn.CrossEntropyLoss()
 
+        self.arange_T = torch.arange(0, config.model.context_length, dtype=torch.long)
+        if self.platform.is_gpu:
+            self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
+
     @staticmethod
     def validate_config(config):
         """Some basic sanity checks for the model config."""
@@ -57,10 +61,8 @@ class GPT(nn.Module):
         B, T = idx.shape
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
 
-        pos = self.platform.move_to_device(torch.arange(0, T, dtype=torch.long), device_index=0) # (T)
-        
         tok_emb = self.transformer.wte(idx) # (B, T, C)
-        pos_emb = self.transformer.wpe(pos) # (B, T, C)
+        pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
         x = tok_emb + pos_emb
         for block in self.transformer.h:
             x = block(x)
