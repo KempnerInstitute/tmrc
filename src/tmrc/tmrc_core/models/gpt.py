@@ -2,22 +2,23 @@ import torch
 
 import torch.nn as nn
 from torch.nn import functional as F
-from .components import decoder
+from tmrc.tmrc_core.models.components import decoder
 
-from ..utils import platform, registry
-#from utils.platform import Platform, auto_device
+from tmrc.tmrc_core.utils import platform
 
+from tmrc.tmrc_core.utils.registry import register_model
 
+@register_model("gpt")
 class GPT(nn.Module):
     """
     Basic implementation of GPT-ish variant architectures from OpenAI.
     This class follows Karpathy's implementation almost exactly. Minor
     changes were made to:
         - validate config
-        - simplify optimization, fuse optimizer step into backward pass [TO DO]
+        - simplify optimization, fuse optimizer step into backward pass [TODO]
         - simplify overall class, e.g., no longer use GPT weight init
         - using the `Platform` class to manage device training
-        - move FlashAttention -> FlexAttention [TO DO]
+        - move FlashAttention -> FlexAttention [TODO]
     """
 
     def __init__(self, config, platform: platform.Platform):
@@ -45,8 +46,8 @@ class GPT(nn.Module):
     def validate_config(config):
         """Some basic sanity checks for the model config."""
 
-        assert config.tokenizer.vocab_size is not None
-        assert config.model.context_length is not None
+        assert config.tokenizer.vocab_size is not None, "valid vocabulary size not defined"
+        assert config.model.context_length is not None, "context length must be valid int > 0"
         assert config.model.d_model % config.model.n_head == 0, "d_model must be divisible by n_head"
 
     def get_num_params(self, non_embedding=False):
@@ -70,7 +71,7 @@ class GPT(nn.Module):
 
         if targets is not None:
             logits = self.lm_head(x)
-            loss = self.loss_criterion(logits.view(-1, logits.size(-1)), targets.view(-1), ignore_index=-1)
+            loss = self.loss_criterion(logits.view(-1, logits.size(-1)), targets.view(-1))
         else:
             logits = self.lm_head(x[:, [-1], :])
             loss = None

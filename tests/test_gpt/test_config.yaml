@@ -2,7 +2,7 @@ defaults:
   - _self_
 
 model:
-  _target_: Cfg
+  name: gpt
   n_head: 4
   d_model: 512
   n_layer: 4
@@ -18,7 +18,7 @@ model:
   activation: relu
 
 optimizer:
-  _target_: torch.optim.AdamW
+  name: AdamW
   lr: 0.0001
   weight_decay: 0.01
   betas: [0.9, 0.999]

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from . import ACTIVATION_REGISTRY
+from tmrc.tmrc_core.models.components import ACTIVATION_REGISTRY
 
 
 class CausalSelfAttention(nn.Module):
