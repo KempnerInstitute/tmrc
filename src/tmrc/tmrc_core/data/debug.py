@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, TypeVar
 from glob import glob
 from pathlib import Path
 import torch
-
+import itertools
 import numpy as np
 
 from torch.nn.attention.flex_attention import (
@@ -61,7 +61,11 @@ def main():
         save_overwrite = True,
     )
 
-    
+    interest = 5
+    sample = next(itertools.islice(train_loader, interest, None))
+    print(sample)
+    sample = move_to_device(sample, "cuda")
+    input_ids = sample["input_ids"]
 
     for idx, batch in enumerate(train_loader):
         if idx == 5:
