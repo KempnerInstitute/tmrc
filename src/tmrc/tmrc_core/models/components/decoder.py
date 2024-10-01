@@ -23,8 +23,9 @@ class CausalSelfAttention(nn.Module):
         self.d_model = config.model.d_model
         self.n_heads = config.model.n_head
 
-        self.flash = hasattr(torch.nn.functional, 'scaled_dot_product_attention')
-        if not self.flash:
+        self.flash = config.model.flash #hasattr(torch.nn.functional, 'scaled_dot_product_attention')
+        self.flex = config.model.flex
+        if not (self.flash or self.flex):
             print("Warning: flash attention not found (torch >= 2.0)")
             self.register_buffer("causal_mask",
                                  torch.tril(torch.ones(config.model.context_length, config.model.context_length)).view(1, 1, config.model.context_length, config.model.context_length))
@@ -41,6 +42,8 @@ class CausalSelfAttention(nn.Module):
 
         if self.flash:
             y = nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=None, is_causal=True)
+        elif self.flex:
+            y = flex_attention(q, k, v, block_mask=block_mask)
         else:
             w = (q @ k.transpose(-2, -1))*k.size(-1)**(-0.5)
             w = w.masked_fill(self.causal_mask[:,:,:T,:T] == 0, float('-inf'))

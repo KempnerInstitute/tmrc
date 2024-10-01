@@ -50,6 +50,8 @@ class GPT(nn.Module):
         assert config.model.context_length is not None, "context length must be valid int > 0"
         assert config.model.d_model % config.model.n_head == 0, "d_model must be divisible by n_head"
 
+        assert (config.model.flash and config.model.flex) is not True, "flash and flex attention cannot be used simultaneously"
+
     def get_num_params(self, non_embedding=False):
         """Get total parameter count."""
         n_params = sum(p.numel() for p in self.parameters())
