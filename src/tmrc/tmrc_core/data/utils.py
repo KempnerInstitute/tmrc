@@ -28,7 +28,6 @@ def build_memmap_dataset(
         paths = paths
         for path in paths:
             metadata.append({"path": str(path)})
-        print(len(metadata))
     elif datasets:
         paths = []
         for label in sorted(datasets.keys()):
