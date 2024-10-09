@@ -37,7 +37,7 @@ dependencies = [
     "nvidia-nvjitlink-cu12==12.6.68",
     "nvidia-nvtx-cu12==12.1.105",
     "sympy==1.13.3",
-    "torch @ https://download.pytorch.org/whl/nightly/cu121",
+    "torch @ https://download.pytorch.org/whl/nightly/cu121/torch-2.5.0.dev20240819+cu121-cp310-cp310-linux_x86_64.whl",
     "triton==3.0.0",
     "typing-extensions==4.12.2",
     "hydra-core==1.3.2"
