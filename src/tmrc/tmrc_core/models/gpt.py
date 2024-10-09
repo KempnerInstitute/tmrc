@@ -42,6 +42,9 @@ class GPT(nn.Module):
         if self.platform.is_gpu:
             self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
 
+        if self.config.flex:
+            flex_attention = torch.compile(flex_attention, dynamic=False)
+
     @staticmethod
     def validate_config(config):
         """Some basic sanity checks for the model config."""
@@ -59,7 +62,7 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
     
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None, block_mask = None):
         
         B, T = idx.shape
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
@@ -67,8 +70,12 @@ class GPT(nn.Module):
         tok_emb = self.transformer.wte(idx) # (B, T, C)
         pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
         x = tok_emb + pos_emb
-        for block in self.transformer.h:
-            x = block(x)
+        if self.config.flex:
+            assert block_mask is not None, "Flex attention requires block mask when calling forward"
+            x = block(x, block_mask)
+        else:
+            for block in self.transformer.h:
+                x = block(x)
         x = self.transformer.ln_f(x)
 
         if targets is not None:

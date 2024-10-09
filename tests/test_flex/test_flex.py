@@ -54,6 +54,8 @@ def test_loader():
     sample = next(itertools.islice(train_loader, 1, None))
     print(sample)
 
+    assert isinstance(train_loader, DataLoader)
+
     # for idx, batch in enumerate(train_loader):
     #     if idx == 3:
     #         batch = move_to_device(batch, "cuda")
@@ -64,6 +66,5 @@ def test_loader():
     #         print("DOCUMENT LENGTHS: ")
     #         print(doc_lens)
 
-test_loader()
 
 # check block/causal mask somehow
