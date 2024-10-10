@@ -16,6 +16,8 @@ model:
   ln_bias: True
   cls_head_bias: True
   activation: relu
+  flash: True
+  flex: False
 
 optimizer:
   name: AdamW

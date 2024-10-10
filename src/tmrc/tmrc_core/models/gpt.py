@@ -8,6 +8,9 @@ from tmrc.tmrc_core.utils import platform
 
 from tmrc.tmrc_core.utils.registry import register_model
 
+from torch.nn.attention.flex_attention import flex_attention
+
+
 @register_model("gpt")
 class GPT(nn.Module):
     """
@@ -42,8 +45,8 @@ class GPT(nn.Module):
         if self.platform.is_gpu:
             self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
 
-        if self.config.flex:
-            flex_attention = torch.compile(flex_attention, dynamic=False)
+        if self.config.model.flex:
+            flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)
 
     @staticmethod
     def validate_config(config):
@@ -70,7 +73,7 @@ class GPT(nn.Module):
         tok_emb = self.transformer.wte(idx) # (B, T, C)
         pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
         x = tok_emb + pos_emb
-        if self.config.flex:
+        if self.config.model.flex:
             assert block_mask is not None, "Flex attention requires block mask when calling forward"
             x = block(x, block_mask)
         else:
