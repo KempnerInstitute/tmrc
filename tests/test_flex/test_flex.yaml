@@ -7,7 +7,7 @@ model:
   d_model: 512
   n_layer: 4
   dropout_p: 0.0
-  context_length: 512
+  context_length: 2048
   weight_precision: bfloat16
   mlp_scale_factor: 4
   mlp_bias: True
