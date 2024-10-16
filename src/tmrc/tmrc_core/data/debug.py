@@ -82,6 +82,7 @@ def main():
             doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(doc_lens)]).reshape(max_seq_len)
 
             doc_mask = move_to_device(doc_mask, "cuda")
+            
 
 
             def document_causal_mask(b, h, q_idx, kv_idx):

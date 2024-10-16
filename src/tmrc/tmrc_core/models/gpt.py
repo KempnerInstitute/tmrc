@@ -75,7 +75,8 @@ class GPT(nn.Module):
         x = tok_emb + pos_emb
         if self.config.model.flex:
             assert block_mask is not None, "Flex attention requires block mask when calling forward"
-            x = block(x, block_mask)
+            for block in self.transformer.h:
+                x = block(x, block_mask)
         else:
             for block in self.transformer.h:
                 x = block(x)
