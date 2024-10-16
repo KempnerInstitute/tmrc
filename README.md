@@ -29,6 +29,7 @@ module load cudnn/9.1.1.17_cuda12-fasrc01
 
 ```bash
 conda create -n tmrc_env python=3.12
+conda activate tmrc_env
 ```
 
 - Step 3: Clone the repository
