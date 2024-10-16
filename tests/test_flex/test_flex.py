@@ -85,8 +85,7 @@ def test_mask(train_loader):
     doc_lens = doc_lens.masked_select(doc_lens != 0)
     doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(doc_lens)]).reshape(sample["input_ids"].shape)
     print(doc_mask)
-    mask_counts = doc_mask.unique(return_counts=True)[1]#.reshape(sample["doc_lens"].shape)
-    # sample_counts = sample["doc_lens"]
+    mask_counts = doc_mask.unique(return_counts=True)[1]
 
     assert torch.equal(mask_counts, doc_lens)
 
@@ -111,8 +110,6 @@ def test_mask(train_loader):
     assert block_mask.shape[-1] == sample["input_ids"].shape[-1]   
 
 
-# test_loader()
-# test_mask()
 def test_forward_pass(model, train_loader):
     sample = next(itertools.islice(train_loader, 3, None))
     doc_lens = sample.get("doc_lens")
@@ -136,4 +133,3 @@ def test_forward_pass(model, train_loader):
     print(output.shape)
     print(output)
     assert output.shape == torch.Size([sample["input_ids"].shape[0], 1, config.tokenizer.vocab_size])
-
