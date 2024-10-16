@@ -14,14 +14,30 @@
 _Transformer model research codebase_
 
 
-## Installation
+## Installation 
 
-- Step 1: Clone the repository
+
+- Step 1: Load required modules
+
+```bash
+module load python/3.12.5-fasrc01
+module load cuda/12.4.1-fasrc01
+module load cudnn/9.1.1.17_cuda12-fasrc01 
+```
+
+- Step 2: Create a Conda environment
+
+```bash
+conda create -n tmrc_env python=3.12
+conda activate tmrc_env
+```
+
+- Step 3: Clone the repository
 ```bash
 git clone git@github.com:KempnerInstitute/tmrc.git
 ```
 
-- Step 2: Install the package in editable mode
+- Step 4: Install the package in editable mode
 ```bash
 cd tmrc
 pip install -e .
