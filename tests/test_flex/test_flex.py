@@ -26,6 +26,8 @@ initialize(config_path=".", version_base=None)
 config: DictConfig = compose(config_name="test_flex")
 platform = Platform()
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 @pytest.fixture(scope="module")
 def model():
     return MODEL_REGISTRY.get(config.model.name)(config, platform)
@@ -82,7 +84,7 @@ def test_mask(sample_dataset):
     sample = next(iter(tatm_dataloader))
     doc_mask = sample.get("document_ids")
     doc_mask = doc_mask.to(torch.int32)
-    #doc_mask = doc_mask.to("cuda")
+    doc_mask = doc_mask.to(device)
 
     x = sample["token_ids"].to(torch.int32)
 
@@ -91,7 +93,7 @@ def test_mask(sample_dataset):
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
 
-    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device="cuda")
+    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
 
     # batch size
     assert block_mask.shape[0] == x.shape[0]
@@ -114,7 +116,7 @@ def test_mask(model, sample_dataset):
     sample = next(iter(tatm_dataloader))
     doc_mask = sample.get("document_ids")
     doc_mask = doc_mask.to(torch.int32)
-    #doc_mask = doc_mask.to("cuda")
+    doc_mask = doc_mask.to(device)
 
     x = sample["token_ids"].to(torch.int32)
 
@@ -123,7 +125,7 @@ def test_mask(model, sample_dataset):
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
 
-    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device="cuda")
+    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
     if platform.is_gpu:
         x = platform.move_to_device(x, device_index=0)
         platform.move_to_device(model, device_index=0)
