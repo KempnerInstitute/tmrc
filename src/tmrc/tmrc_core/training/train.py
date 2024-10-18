@@ -65,7 +65,6 @@ def train(config: DictConfig):
     
     # Training loop
     try:
-        print(f"is gpu:? {platform.is_gpu}")
         steps_done = 0
         for epoch in range(config.training.epochs):
             model.train()
@@ -78,18 +77,18 @@ def train(config: DictConfig):
                 
                 optimizer.zero_grad()
                 
-                print(x.shape)
                 with torch.autocast(device_type=platform.get_device_str(), 
                                   dtype=getattr(torch, config.model.autocast_precision)):
                     _, loss = model(x, y)
                 
-                print(f"Loss: {loss:.4f}")
                 
+
                 loss.backward()
                 optimizer.step()
                 
                 # Logging
                 if batch_idx % config.training.log_interval == 0:
+                    print(f"loss: {loss:.4f}")
                     wandb.log({
                         "train_loss": loss.item(),
                         "epoch": epoch,
