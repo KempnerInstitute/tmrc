@@ -1,26 +1,24 @@
 # Description: Test the flex attention mechanism in the TMRC model
-from torch.utils.data import DataLoader
-from typing import Any, Dict, List
+import numpy as np
+import pytest
 import torch
 import torch.nn as nn
 
+from hydra import compose, initialize
+from hydra.core.global_hydra import GlobalHydra
+from omegaconf import DictConfig
+from tatm.data import get_dataset, torch_collate_fn, TatmMemmapDataset
+from tatm.tokenizer.metadata import write_metadata
+from tmrc.tmrc_core.models import gpt, MODEL_REGISTRY
+from tmrc.tmrc_core.models.components import OPTIMIZER_REGISTRY
+from tmrc.tmrc_core.utils.platform import Platform
 from torch.nn.attention.flex_attention import (
     _DEFAULT_SPARSE_BLOCK_SIZE,
     create_block_mask,
 )
+from torch.utils.data import DataLoader
+from typing import Any, Dict, List
 
-
-from hydra import compose, initialize
-from omegaconf import DictConfig
-import pytest
-from tmrc.tmrc_core.models import gpt
-from tmrc.tmrc_core.utils.platform import Platform
-from tmrc.tmrc_core.models.components import OPTIMIZER_REGISTRY
-from tmrc.tmrc_core.models import MODEL_REGISTRY
-
-from tatm.data import get_dataset, torch_collate_fn
-
-from hydra.core.global_hydra import GlobalHydra
 GlobalHydra.instance().clear()
 
 
@@ -41,16 +39,44 @@ def test_model_creation():
     assert isinstance(model.transformer['ln_f'], nn.LayerNorm)
 
 
-def test_loader():
-    data_paths = "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/text/redpajama-v1/tokenized/t5-base/arxiv"
-    tatm_dataset = get_dataset(data_paths, context_length=2048)
-    tatm_dataloader = DataLoader(tatm_dataset, batch_size=4, collate_fn=torch_collate_fn)
+@pytest.fixture()
+def sample_dataset(tmp_path):
+    for i in range(10):
+        data = np.memmap(
+            tmp_path / f"test_{i}.bin", dtype="uint16", mode="w+", shape=(config.model.context_length,)
+        )
+        data[:] = i * config.model.context_length + np.arange(config.model.context_length)
+        data.flush()
+        del data
+    write_metadata("t5-base", str(tmp_path), "test")
+    yield (tmp_path, "test")
+
+    for i in range(10):
+        (tmp_path / f"test_{i}.bin").unlink()
+
+def test_tatm_loader(sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
+    )
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
     assert isinstance(tatm_dataloader, DataLoader)
 
-def test_mask():
-    data_paths = "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/text/redpajama-v1/tokenized/t5-base/arxiv"
-    tatm_dataset = get_dataset(data_paths, context_length=2048)
-    tatm_dataloader = DataLoader(tatm_dataset, batch_size=4, collate_fn=torch_collate_fn)
+
+def test_mask(sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
+    )
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
     assert isinstance(tatm_dataloader, DataLoader)
 
     sample = next(iter(tatm_dataloader))
@@ -73,10 +99,16 @@ def test_mask():
     assert block_mask.shape[-1] == x.shape[-1]   
 
 
-def test_forward_pass(model):
-    data_paths = "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/text/redpajama-v1/tokenized/t5-base/arxiv"
-    tatm_dataset = get_dataset(data_paths, context_length=2048)
-    tatm_dataloader = DataLoader(tatm_dataset, batch_size=4, collate_fn=torch_collate_fn)
+def test_mask(model, sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
+    )
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
     assert isinstance(tatm_dataloader, DataLoader)
 
     sample = next(iter(tatm_dataloader))
@@ -98,3 +130,6 @@ def test_forward_pass(model):
 
     output, _ = model(x, block_mask=block_mask)
     assert output.shape == torch.Size([sample["token_ids"].shape[0], 1, config.tokenizer.vocab_size])
+
+
+
