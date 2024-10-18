@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "my_package"
+name = "tmrc"
 version = "0.1.0"
 description = "Transformer Model Research Codebase (TMRC)"
 authors = [
@@ -41,7 +41,9 @@ dependencies = [
     "triton==3.0.0",
     "typing-extensions==4.12.2",
     "hydra-core==1.3.2"
+
 ]
+
 [project.optional-dependencies]
 dev = [
     "pytest",
