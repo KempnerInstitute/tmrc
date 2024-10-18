@@ -8,6 +8,9 @@ from tmrc.tmrc_core.utils import platform
 
 from tmrc.tmrc_core.utils.registry import register_model
 
+from torch.nn.attention.flex_attention import flex_attention
+
+
 @register_model("gpt")
 class GPT(nn.Module):
     """
@@ -42,6 +45,9 @@ class GPT(nn.Module):
         if self.platform.is_gpu:
             self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
 
+        if self.config.model.flex:
+            flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)
+
     @staticmethod
     def validate_config(config):
         """Some basic sanity checks for the model config."""
@@ -50,6 +56,8 @@ class GPT(nn.Module):
         assert config.model.context_length is not None, "context length must be valid int > 0"
         assert config.model.d_model % config.model.n_head == 0, "d_model must be divisible by n_head"
 
+        assert (config.model.flash and config.model.flex) is not True, "flash and flex attention cannot be used simultaneously"
+
     def get_num_params(self, non_embedding=False):
         """Get total parameter count."""
         n_params = sum(p.numel() for p in self.parameters())
@@ -57,7 +65,7 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
     
-    def forward(self, idx, targets=None):
+    def forward(self, idx, targets=None, block_mask = None):
         
         B, T = idx.shape
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
@@ -65,8 +73,13 @@ class GPT(nn.Module):
         tok_emb = self.transformer.wte(idx) # (B, T, C)
         pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
         x = tok_emb + pos_emb
-        for block in self.transformer.h:
-            x = block(x)
+        if self.config.model.flex:
+            assert block_mask is not None, "Flex attention requires block mask when calling forward"
+            for block in self.transformer.h:
+                x = block(x, block_mask)
+        else:
+            for block in self.transformer.h:
+                x = block(x)
         x = self.transformer.ln_f(x)
 
         if targets is not None:

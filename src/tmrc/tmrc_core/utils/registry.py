@@ -32,3 +32,7 @@ register_optimizer = OPTIMIZER_REGISTRY.register
 """Model registry"""
 MODEL_REGISTRY = Registry("models")
 register_model = MODEL_REGISTRY.register
+
+"""Mask registry"""
+MASK_REGISTRY = Registry("masks")
+register_mask = MASK_REGISTRY.register
