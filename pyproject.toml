@@ -17,7 +17,7 @@ classifiers = [
 ]
 dependencies = [
     "filelock==3.16.1",
-    "git+https://github.com/KempnerInstitute/tatm.git@main",
+    "tatm @ git+https://github.com/KempnerInstitute/tatm.git@main",
     "fsspec==2024.9.0",
     "jinja2==3.1.4",
     "markupsafe==2.1.5",
