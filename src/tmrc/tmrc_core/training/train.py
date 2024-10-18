@@ -9,7 +9,7 @@ from omegaconf import DictConfig
 from pathlib import Path
 from typing import Tuple, Optional
 import numpy as np
-from tqdm import tqdm
+import argparse
 
 from tmrc.tmrc_core.models import gpt
 from tmrc.tmrc_core.utils.platform import Platform
@@ -28,7 +28,7 @@ def save_model_periodic(model: torch.nn.Module,
         torch.save(model.state_dict(), save_path)
         print(f"Model saved to {save_path}")
 
-@hydra.main(config_path="/n/home01/nikhilanand/tmrc/configs/training", config_name="default_train_config")
+@hydra.main(version_base=None)
 def train(config: DictConfig):
     # Initialize wandb
     init_wandb(config)
@@ -53,24 +53,13 @@ def train(config: DictConfig):
         weight_decay=config.optimizer.weight_decay
     )
     
-    # Set up model saving thread that should keep going in the background
-    # if config.training.save_model:
-    #     os.makedirs(config.training.artifacts_path, exist_ok=True)
-    #     stop_save_thread = threading.Event()
-    #     save_thread = threading.Thread(
-    #         target=save_model_periodic,
-    #         args=(model, config.training.artifacts_path, config.training.save_every, stop_save_thread)
-    #     )
-    #     save_thread.start()
-    
     # Training loop
     try:
         steps_done = 0
         for epoch in range(config.training.epochs):
             model.train()
-            train_iterator = tqdm(train_loader, desc=f"Epoch {epoch+1}")
             
-            for batch_idx, sample in enumerate(train_iterator):
+            for batch_idx, sample in enumerate(train_loader):
                 tok_ids = sample.get("token_ids").long()
                 x = tok_ids[:, :-1]  # Input (B, T-1)
                 y = tok_ids[:, 1:]  # Labels (B, T-1)
@@ -85,14 +74,12 @@ def train(config: DictConfig):
                                   dtype=getattr(torch, config.model.autocast_precision)):
                     _, loss = model(x, y)
                 
-                
-
                 loss.backward()
                 optimizer.step()
                 
                 # Logging
                 if batch_idx % config.training.log_interval == 0:
-                    print(f"loss: {loss:.4f}")
+                    print(f"@ batch index {batch_idx}, train loss: {loss:.4f}")
                     wandb.log({
                         "train_loss": loss.item(),
                         "epoch": epoch,
@@ -118,6 +105,7 @@ def train(config: DictConfig):
                     
                     _, loss = model(x, y)
                     val_losses.append(loss.item())
+                    print(f"Validation loss: {loss:.4f}")
             
             avg_val_loss = sum(val_losses) / len(val_losses)
             wandb.log({
@@ -131,14 +119,9 @@ def train(config: DictConfig):
     finally:
         # Cleanup
         if config.training.save_model:
-            #stop_save_thread.set()
-            #save_thread.join()
-            # Save final model
             final_save_path = os.path.join(config.training.artifacts_path, "model_final.pt")
             torch.save(model.state_dict(), final_save_path)
 
-# def init_wandb(config):
-#     wandb.init(project=config.wandb_log.name, config=dict(config))
 
 def init_wandb(config):
     try:
@@ -150,8 +133,25 @@ def init_wandb(config):
         else:
             raise
 
+def get_config_path():
+    parser = argparse.ArgumentParser(description='Training script with customizable config path')
+    parser.add_argument('--config-path', 
+                       type=str,
+                       default="../../../../configs/training",
+                       help='Path to the config directory')
+    parser.add_argument('--config-name',
+                       type=str,
+                       default="default_train_config",
+                       help='Name of the config file (without .yaml extension)')
+    args = parser.parse_args()
+    return args.config_path, args.config_name
+
 if __name__ == '__main__':
     """
     Basic train loop, takes in hydra config to specify train parameters.
+    Config path and name can be customized via command line arguments.
     """
-    train()
+    config_path, config_name = get_config_path()
+    hydra.initialize(version_base=None, config_path=config_path)
+    config = hydra.compose(config_name=config_name)
+    train(config)

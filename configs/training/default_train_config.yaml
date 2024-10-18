@@ -37,9 +37,9 @@ tokenizer:
 
 training:
   epochs: 1
-  train_steps: 500 # do whatever is larger, train_steps or epoch
+  train_steps: 100000 # do whatever is smaller, train_steps or epoch
   batch_size: 256
-  log_interval: 5
+  log_interval: 20
   shuffle: True
   save_model: True
   save_every: 3600 # in seconds (saves state every hour)

@@ -166,3 +166,6 @@ cython_debug/
 
 # model artifacts
 outputs/
+
+#wandb
+wandb/
