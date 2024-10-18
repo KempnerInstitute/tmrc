@@ -35,7 +35,7 @@ dependencies = [
     "nvidia-nccl-cu12==2.20.5",
     "nvidia-nvjitlink-cu12==12.6.68",
     "nvidia-nvtx-cu12==12.1.105",
-    "sympy",
+    "sympy==1.13.3",
     "torch @ https://download.pytorch.org/whl/nightly/cpu-cxx11-abi/torch-2.5.0.dev20240819%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl",
     "triton==3.0.0",
     "typing-extensions==4.12.2",
@@ -43,12 +43,7 @@ dependencies = [
 ]
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "pytest-sphinx",
-    "twine>=1.11.0",
-    "setuptools",
-    "wheel",
-    "build",
+    "pytest"
 ]
 docs = [
     "sphinx",
