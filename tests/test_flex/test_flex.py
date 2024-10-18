@@ -20,6 +20,9 @@ from tmrc.tmrc_core.models import MODEL_REGISTRY
 
 from tatm.data import get_dataset, torch_collate_fn
 
+from hydra.core.global_hydra import GlobalHydra
+GlobalHydra.instance().clear()
+
 
 initialize(config_path=".", version_base=None)
 config: DictConfig = compose(config_name="test_flex")
