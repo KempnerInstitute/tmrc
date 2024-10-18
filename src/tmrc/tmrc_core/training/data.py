@@ -140,19 +140,18 @@ class ValidationBinaryDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         return self.data[idx]
 
-# Example usage in your training loop:
 def create_dataloaders(config):
     train_dataset = StreamingBinaryDataset(
         data_dir=config.datasets.path,
         context_length=config.model.context_length,
-        chunk_size=100_000,  # Adjust based on your memory constraints
-        buffer_size=10_000   # Adjust based on desired shuffle randomness
+        chunk_size=100_000,
+        buffer_size=10_000
     )
     
     val_dataset = ValidationBinaryDataset(
         data_dir=config.datasets.path,
         context_length=config.model.context_length,
-        max_size=10_000  # Adjust based on your validation needs
+        max_size=10_000 
     )
     
     train_loader = DataLoader(
