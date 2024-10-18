@@ -24,6 +24,6 @@ def test_simple_sum():
     assert simple_sum.sum() == 2
 
     # Test case 5: Single number
-    numbers = [5]
+    numbers = [5, 10]
     simple_sum = SimpleSum(numbers)
-    assert simple_sum.sum() == 5
+    assert simple_sum.sum() == 15
