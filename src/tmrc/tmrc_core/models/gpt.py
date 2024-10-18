@@ -38,7 +38,7 @@ class GPT(nn.Module):
         self.lm_head = nn.Linear(config.model.d_model, config.tokenizer.vocab_size, bias=config.model.cls_head_bias)
         self.loss_criterion = nn.CrossEntropyLoss()
 
-        self.arange_T = torch.arange(0, config.model.context_length, dtype=torch.long)
+        self.arange_T = torch.arange(0, config.model.context_length-1, dtype=torch.long)
         if self.platform.is_gpu:
             self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
 

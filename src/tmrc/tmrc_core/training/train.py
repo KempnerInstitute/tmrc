@@ -70,7 +70,11 @@ def train(config: DictConfig):
             model.train()
             train_iterator = tqdm(train_loader, desc=f"Epoch {epoch+1}")
             
-            for batch_idx, (x, y) in enumerate(train_iterator):
+            for batch_idx, sample in enumerate(train_iterator):
+                tok_ids = sample.get("token_ids").long()
+                x = tok_ids[:, :-1]  # Input (B, T-1)
+                y = tok_ids[:, 1:]  # Labels (B, T-1)
+
                 if platform.is_gpu:
                     x = platform.move_to_device(x, device_index=0)
                     y = platform.move_to_device(y, device_index=0)
@@ -103,7 +107,11 @@ def train(config: DictConfig):
             model.eval()
             val_losses = []
             with torch.no_grad():
-                for x, y in val_loader:
+                for sample in val_loader:
+                    tok_ids = sample.get("token_ids").long()
+                    x = tok_ids[:, :-1]  # Input (B, T-1)
+                    y = tok_ids[:, 1:]  # Labels (B, T-1)
+
                     if platform.is_gpu:
                         x = platform.move_to_device(x, device_index=0)
                         y = platform.move_to_device(y, device_index=0)
