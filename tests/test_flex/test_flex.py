@@ -82,7 +82,7 @@ def test_mask(sample_dataset):
     sample = next(iter(tatm_dataloader))
     doc_mask = sample.get("document_ids")
     doc_mask = doc_mask.to(torch.int32)
-    doc_mask = doc_mask.to("cuda")
+    #doc_mask = doc_mask.to("cuda")
 
     x = sample["token_ids"].to(torch.int32)
 
@@ -114,7 +114,7 @@ def test_mask(model, sample_dataset):
     sample = next(iter(tatm_dataloader))
     doc_mask = sample.get("document_ids")
     doc_mask = doc_mask.to(torch.int32)
-    doc_mask = doc_mask.to("cuda")
+    #doc_mask = doc_mask.to("cuda")
 
     x = sample["token_ids"].to(torch.int32)
 
