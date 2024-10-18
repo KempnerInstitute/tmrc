@@ -7,7 +7,8 @@
     <img src="https://github.com/KempnerInstitute/tmrc/actions/workflows/python-package.yml/badge.svg" alt="tests">
   </a>
   <a href="https://codecov.io/gh/KempnerInstitute/tmrc" > 
-   <img src="https://codecov.io/gh/KempnerInstitute/tmrc/graph/badge.svg?token=HUJRFX92DF"/> 
+    git stat<img src="https://codecov.io/gh/KempnerInstitute/tmrc/graph/badge.svg?token=PONKB6HEEH"/> 
+  </a>
 </p>
 
 
