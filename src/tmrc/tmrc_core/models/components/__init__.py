@@ -1,4 +1,3 @@
-from ...utils.registry import Registry
-
-ACTIVATION_REGISTRY = Registry("activations")
-register_activation = ACTIVATION_REGISTRY.register
+from tmrc.tmrc_core.models.components import layers
+from tmrc.tmrc_core.models.components import optimizers
+from tmrc.tmrc_core.utils.registry import ACTIVATION_REGISTRY, OPTIMIZER_REGISTRY
