@@ -8,6 +8,9 @@ import pytest
 import torch
 import torch.nn as nn
 
+from hydra.core.global_hydra import GlobalHydra
+GlobalHydra.instance().clear()
+
 initialize(config_path=".", version_base=None)
 config: DictConfig = compose(config_name="test_config")
 platform = Platform()

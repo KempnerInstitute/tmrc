@@ -1,41 +1,32 @@
-from olmo.data import  MemMapDataset, DataCollator, IterableDataset
-import torch.distributed as dist
-from olmo.torch_util import barrier, get_global_rank, get_world_size
-
-from torch.utils.data import DataLoader, DistributedSampler
-from pathlib import Path
-from typing import Any, Dict, List, Optional, TypeVar
-from glob import glob
-from pathlib import Path
+# Description: Test the flex attention mechanism in the TMRC model
+import numpy as np
+import pytest
 import torch
 import torch.nn as nn
-import itertools
 
-import numpy as np
-
+from hydra import compose, initialize
+from hydra.core.global_hydra import GlobalHydra
+from omegaconf import DictConfig
+from tatm.data import get_dataset, torch_collate_fn, TatmMemmapDataset
+from tatm.tokenizer.metadata import write_metadata
+from tmrc.tmrc_core.models import gpt, MODEL_REGISTRY
+from tmrc.tmrc_core.models.components import OPTIMIZER_REGISTRY
+from tmrc.tmrc_core.utils.platform import Platform
 from torch.nn.attention.flex_attention import (
     _DEFAULT_SPARSE_BLOCK_SIZE,
     create_block_mask,
-    create_mask,
-    flex_attention,
 )
+from torch.utils.data import DataLoader
+from typing import Any, Dict, List
 
-from tmrc.tmrc_core.data.utils import build_memmap_dataset, build_train_dataloader, move_to_device
-
-
-from hydra import compose, initialize
-from omegaconf import DictConfig
-import pytest
-
-from tmrc.tmrc_core.models import gpt
-from tmrc.tmrc_core.utils.platform import Platform
-from tmrc.tmrc_core.models.components import OPTIMIZER_REGISTRY
-from tmrc.tmrc_core.models import MODEL_REGISTRY
+GlobalHydra.instance().clear()
 
 
 initialize(config_path=".", version_base=None)
 config: DictConfig = compose(config_name="test_flex")
 platform = Platform()
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 @pytest.fixture(scope="module")
 def model():
@@ -49,87 +40,98 @@ def test_model_creation():
     assert isinstance(model.transformer['h'], nn.ModuleList)
     assert isinstance(model.transformer['ln_f'], nn.LayerNorm)
 
-@pytest.fixture(scope="module")
-def train_loader():
-    data_paths = ["/n/holyscratch01/barak_lab/Lab/data/dolma-algebraic-stack-tokenized-llama/0/part-0-00000.npy"]
-    train_loader = build_train_dataloader(
-        global_train_batch_size = 4,
-        device_train_batch_size = 4 // get_world_size(),
-        pad_direction = "right",
-        pad_token_id = 1,
-        max_seq_len = 2048, 
-        memmap_dtype = getattr(np, "uint16"),  
-        eos_token_id = 2, 
-        paths = data_paths,
-        save_folder = "./temp/",
-        num_workers = 8,
-        pin_memory = True,
-        prefetch_factor = 16,
-        persistent_workers = True,
-        timeout = 0,
-        drop_last = True,
-        save_overwrite = True,
+
+@pytest.fixture()
+def sample_dataset(tmp_path):
+    for i in range(10):
+        data = np.memmap(
+            tmp_path / f"test_{i}.bin", dtype="uint16", mode="w+", shape=(config.model.context_length,)
+        )
+        data[:] = i * config.model.context_length + np.arange(config.model.context_length)
+        data.flush()
+        del data
+    write_metadata("t5-base", str(tmp_path), "test")
+    yield (tmp_path, "test")
+
+    for i in range(10):
+        (tmp_path / f"test_{i}.bin").unlink()
+
+def test_tatm_loader(sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
     )
-    return train_loader
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
+    assert isinstance(tatm_dataloader, DataLoader)
 
 
-def test_loader(train_loader):
-    train_loader = train_loader
-    assert isinstance(train_loader, DataLoader)
+def test_mask(sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
+    )
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
+    assert isinstance(tatm_dataloader, DataLoader)
 
-def test_mask(train_loader):
-    sample = next(itertools.islice(train_loader, 3, None))
-    print(sample)
-    doc_lens = sample.get("doc_lens")
+    sample = next(iter(tatm_dataloader))
+    doc_mask = sample.get("document_ids")
+    doc_mask = doc_mask.to(torch.int32)
+    doc_mask = doc_mask.to(device)
 
-    doc_lens = doc_lens.masked_select(doc_lens != 0)
-    doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(doc_lens)]).reshape(sample["input_ids"].shape)
-    print(doc_mask)
-    mask_counts = doc_mask.unique(return_counts=True)[1]
-
-    assert torch.equal(mask_counts, doc_lens)
-
-    doc_mask = move_to_device(doc_mask, "cuda")
-    print(doc_mask.shape)
+    x = sample["token_ids"].to(torch.int32)
 
     def document_causal_mask(b, h, q_idx, kv_idx):
         causal_mask = q_idx >= kv_idx
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
-            
-            
-    block_mask = create_block_mask(document_causal_mask, sample["input_ids"].shape[0], 1, sample["input_ids"].shape[-1], sample["input_ids"].shape[-1], device="cuda")
-    print(f"\nBlock Mask:\n{block_mask}")
 
-    print(block_mask.shape[:-1])
-    print(sample["input_ids"].shape)
+    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
 
     # batch size
-    assert block_mask.shape[0] == sample["input_ids"].shape[0]
+    assert block_mask.shape[0] == x.shape[0]
     # seqlen
-    assert block_mask.shape[-1] == sample["input_ids"].shape[-1]   
+    assert block_mask.shape[-1] == x.shape[-1]   
 
 
-def test_forward_pass(model, train_loader):
-    sample = next(itertools.islice(train_loader, 3, None))
-    doc_lens = sample.get("doc_lens")
-    doc_lens = doc_lens.masked_select(doc_lens != 0)
-    doc_mask = torch.cat([torch.full([e.tolist()], i) for i, e in enumerate(doc_lens)]).reshape(sample["input_ids"].shape)
-    doc_mask = move_to_device(doc_mask, "cuda")
+def test_mask(model, sample_dataset):
+    dataset = TatmMemmapDataset(
+        str(sample_dataset[0] / sample_dataset[1]), config.model.context_length, "uint16", create_doc_mask=True
+    )
+    tatm_dataloader = DataLoader(
+        dataset,
+        batch_size=10,
+        num_workers=0,
+        collate_fn=torch_collate_fn,
+    )
+    assert isinstance(tatm_dataloader, DataLoader)
+
+    sample = next(iter(tatm_dataloader))
+    doc_mask = sample.get("document_ids")
+    doc_mask = doc_mask.to(torch.int32)
+    doc_mask = doc_mask.to(device)
+
+    x = sample["token_ids"].to(torch.int32)
 
     def document_causal_mask(b, h, q_idx, kv_idx):
         causal_mask = q_idx >= kv_idx
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
-            
-            
-    block_mask = create_block_mask(document_causal_mask, sample["input_ids"].shape[0], 1, sample["input_ids"].shape[-1], sample["input_ids"].shape[-1], device="cuda")
-    x = sample["input_ids"]
+
+    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
     if platform.is_gpu:
         x = platform.move_to_device(x, device_index=0)
         platform.move_to_device(model, device_index=0)
 
     output, _ = model(x, block_mask=block_mask)
-    print(output.shape)
-    print(output)
-    assert output.shape == torch.Size([sample["input_ids"].shape[0], 1, config.tokenizer.vocab_size])
+    assert output.shape == torch.Size([sample["token_ids"].shape[0], 1, config.tokenizer.vocab_size])
+
+
+
