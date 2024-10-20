@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
-from torch.nn.attention.flex_attention import flex_attention
+from torch.nn.attention.flex_attention import flex_attention, create_block_mask
 
-from tmrc.tmrc_core.models.components import ACTIVATION_REGISTRY
+from tmrc.tmrc_core.models.components import ACTIVATION_REGISTRY, MASK_REGISTRY
 
 
 class CausalSelfAttention(nn.Module):
@@ -32,8 +32,9 @@ class CausalSelfAttention(nn.Module):
             print("Warning: flash attention not found (torch >= 2.0)")
             self.register_buffer("causal_mask",
                                  torch.tril(torch.ones(config.model.context_length, config.model.context_length)).view(1, 1, config.model.context_length, config.model.context_length))
+ 
 
-    def forward(self, x, block_mask = None):
+    def forward(self, x, created_block_mask=None):
         # x: (B, T, C)
 
         B, T, C = x.size()
@@ -46,7 +47,7 @@ class CausalSelfAttention(nn.Module):
         if self.flash:
             y = nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=None, is_causal=True)
         elif self.flex:
-            y = flex_attention(q, k, v, block_mask=block_mask)
+            y = flex_attention(q, k, v, block_mask=created_block_mask)
         else:
             w = (q @ k.transpose(-2, -1))*k.size(-1)**(-0.5)
             w = w.masked_fill(self.causal_mask[:,:,:T,:T] == 0, float('-inf'))
@@ -85,7 +86,7 @@ class Block(nn.Module):
         self.ln_2 = nn.LayerNorm(config.model.d_model, bias=config.model.ln_bias)
         self.mlp = MLP(config)
     
-    def forward(self, x, block_mask = None):
-        x = x + self.attn(self.ln_1(x), block_mask)
+    def forward(self, x, created_block_mask=None):
+        x = x + self.attn(self.ln_1(x), created_block_mask)
         x = x + self.mlp(self.ln_2(x))
         return x 

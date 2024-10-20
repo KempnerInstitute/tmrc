@@ -8,7 +8,8 @@ from tmrc.tmrc_core.utils import platform
 
 from tmrc.tmrc_core.utils.registry import register_model
 
-from torch.nn.attention.flex_attention import flex_attention
+from torch.nn.attention.flex_attention import flex_attention, create_block_mask
+from tmrc.tmrc_core.models.components import MASK_REGISTRY
 
 
 @register_model("gpt")
@@ -46,7 +47,11 @@ class GPT(nn.Module):
             self.arange_T = self.platform.move_to_device(self.arange_T, device_index=0)
 
         if self.config.model.flex:
-            flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)
+            #flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)
+            self.block_mask_fn = MASK_REGISTRY.get(config.model.mask)
+            self.uses_flex = True
+        else:
+            self.uses_flex = False
 
     @staticmethod
     def validate_config(config):
@@ -57,6 +62,8 @@ class GPT(nn.Module):
         assert config.model.d_model % config.model.n_head == 0, "d_model must be divisible by n_head"
 
         assert (config.model.flash and config.model.flex) is not True, "flash and flex attention cannot be used simultaneously"
+        if config.model.flex:
+            assert config.model.mask is not None, "Flex attention requires block mask when calling forward"
 
     def get_num_params(self, non_embedding=False):
         """Get total parameter count."""
@@ -65,7 +72,7 @@ class GPT(nn.Module):
             n_params -= self.transformer.wpe.weight.numel()
         return n_params
     
-    def forward(self, idx, targets=None, block_mask = None):
+    def forward(self, idx, targets=None, doc_ids=None):
         
         B, T = idx.shape
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
@@ -73,13 +80,16 @@ class GPT(nn.Module):
         tok_emb = self.transformer.wte(idx) # (B, T, C)
         pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
         x = tok_emb + pos_emb
-        if self.config.model.flex:
-            assert block_mask is not None, "Flex attention requires block mask when calling forward"
-            for block in self.transformer.h:
-                x = block(x, block_mask)
+
+        if self.uses_flex:
+            created_block_mask = create_block_mask(self.block_mask_fn(doc_ids), \
+                                               None, None, x.shape[-1], x.shape[-1], _compile=True, device=self.platform.get_device_str())
         else:
-            for block in self.transformer.h:
-                x = block(x)
+            created_block_mask = None
+        
+
+        for block in self.transformer.h:
+            x = block(x, created_block_mask)
         x = self.transformer.ln_f(x)
 
         if targets is not None:

@@ -18,6 +18,7 @@ model:
   activation: relu
   flash: False
   flex: True
+  mask: causal_document
 
 optimizer:
   name: AdamW

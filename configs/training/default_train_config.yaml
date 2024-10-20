@@ -3,43 +3,54 @@ defaults:
 
 datasets:
   name: algebraic-stack
-    path: /home/nikhilanand/algebraic-stack
+  path: "/n/holylfs06/LABS/kempner_shared/Everyone/testbed/text/redpajama-v1/tokenized/t5-base/arxiv"
   tokenizer_used: t5-base
 
 model:
-  _target_: Cfg
-  n_heads: 8
-  d_model: 2048
+  name: gpt
+  n_head: 4
+  d_model: 512
   n_layer: 8
   dropout_p: 0.0
-  ctx_len: 512
-  weight_precision: bfloat16
+  context_length: 512
+  autocast_precision: bfloat16
+  flash: False
+  flex: True
+  mlp_scale_factor: 4
+  mlp_bias: True
+  attn_bias: False
+  proj_bias: True
+  ln_bias: True
+  cls_head_bias: True
+  activation: relu
+  mask: causal_document
 
 optimizer:
-  _target_: torch.optim.AdamW
+  name: AdamW
   lr: 0.0001
   weight_decay: 0.01
   betas: [0.9, 0.999]
   eps: 1e-8
   precision: float32
+  
+tokenizer:
+  name: t5-base
+  vocab_size: 32128
 
-# scheduler:
-#   _target_: torch.optim.lr_scheduler.CosineAnnealingLR
-#   T_max: 1000
-#   eta_min: 1e-6
 
 training:
   epochs: 1
-  train_steps: 500 # do whatever is larger, train_steps or epoch
-  batch_size: 2048
-  log_interval: 500
+  train_steps: 100000 # do whatever is smaller, train_steps or epoch
+  batch_size: 256
+  log_interval: 20
   shuffle: True
   save_model: True
-  artifacts_path: /home/nikhilanand/Research/artifacts
+  save_every: 3600 # in seconds (saves state every hour)
+  artifacts_path: /n/home01/nikhilanand/scratch/tmrc_dev_artifacts
   use_oracle: False
 
 wandb_log:
-  name: tmrc_dev_log202408
+  name: tmrc_dev_log202410
 
 HydraConf:
   version_base: "1.1"
