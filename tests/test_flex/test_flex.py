@@ -15,6 +15,7 @@ from tmrc.tmrc_core.utils.platform import Platform
 from torch.nn.attention.flex_attention import (
     _DEFAULT_SPARSE_BLOCK_SIZE,
     create_block_mask,
+    BlockMask
 )
 from torch.utils.data import DataLoader
 from typing import Any, Dict, List
@@ -93,7 +94,8 @@ def test_mask(sample_dataset):
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
 
-    block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
+    block_mask = create_block_mask(document_causal_mask, None, None, x.shape[-1], x.shape[-1], device=device)
+    assert isinstance(block_mask, BlockMask)
 
     # batch size
     assert block_mask.shape[0] == x.shape[0]
@@ -126,11 +128,13 @@ def test_mask(model, sample_dataset):
         return causal_mask & document_mask
 
     block_mask = create_block_mask(document_causal_mask, x.shape[0], 1, x.shape[-1], x.shape[-1], device=device)
+    assert isinstance(block_mask, BlockMask)
+
     if platform.is_gpu:
         x = platform.move_to_device(x, device_index=0)
         platform.move_to_device(model, device_index=0)
 
-    output, _ = model(x, block_mask=block_mask)
+    output, _ = model(x, doc_ids=doc_mask)
     assert output.shape == torch.Size([sample["token_ids"].shape[0], 1, config.tokenizer.vocab_size])
 
 

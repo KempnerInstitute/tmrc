@@ -14,6 +14,8 @@ model:
   dropout_p: 0.0
   context_length: 512
   autocast_precision: bfloat16
+  flash: False
+  flex: True
   mlp_scale_factor: 4
   mlp_bias: True
   attn_bias: False
@@ -21,6 +23,7 @@ model:
   ln_bias: True
   cls_head_bias: True
   activation: relu
+  mask: causal_document
 
 optimizer:
   name: AdamW
