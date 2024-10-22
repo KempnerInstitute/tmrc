@@ -1,0 +1,207 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; TMRC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Training Configuration" href="training_config.html" />
+    <link rel="prev" title="tmrc: The Kempner LLM Training Codebase" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TMRC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation-steps">Installation Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-experiments">Running Experiments</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Training confirguations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="training_config.html">Training Configuration</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/tmrc.html">tmrc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">tmrc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TMRC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<section id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h3>
+<p>The following packages are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>: Deep learning framework</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Weights</span> <span class="pre">&amp;</span> <span class="pre">Biases</span></code>: Experiment tracking</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Hydra</span></code>: Configuration management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NumPy</span></code>: Numerical computing</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tatm</span></code>: Dataset loading support</p></li>
+</ul>
+<p>You can install the core requirements using pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">torch</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">wandb</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">hydra</span><span class="o">-</span><span class="n">core</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span>
+</pre></div>
+</div>
+<p>For dataset loading, we currently use the <code class="docutils literal notranslate"><span class="pre">tatm</span></code> package also developed at the Kempner Institute. Install it using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">KempnerInstitute</span><span class="o">/</span><span class="n">tatm</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>More details about <code class="docutils literal notranslate"><span class="pre">tatm</span></code> can be found <a class="reference external" href="https://github.com/KempnerInstitute/tatm/tree/dev">here</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In future versions, we will support default dataset loading without requiring external packages.</p>
+</div>
+</section>
+<section id="installation-steps">
+<h3>Installation Steps<a class="headerlink" href="#installation-steps" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p>Clone and install the package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">KempnerInstitute</span><span class="o">/</span><span class="n">tmrc</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">tmrc</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="running-experiments">
+<h3>Running Experiments<a class="headerlink" href="#running-experiments" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p>Login to Weights &amp; Biases to enable experiment tracking:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wandb</span> <span class="n">login</span>
+</pre></div>
+</div>
+</li>
+<li><p>Request compute resources. For example, to request an H100 GPU:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salloc</span> <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">kempner_h100</span> <span class="o">--</span><span class="n">account</span><span class="o">=&lt;</span><span class="n">your</span> <span class="n">FASRC</span> <span class="n">account</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cpus</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">task</span><span class="o">=</span><span class="mi">8</span> <span class="o">--</span><span class="n">mem</span><span class="o">=</span><span class="mi">8</span><span class="n">G</span> <span class="o">--</span><span class="n">gres</span><span class="o">=</span><span class="n">gpu</span><span class="p">:</span><span class="mi">1</span>  <span class="o">--</span><span class="n">time</span><span class="o">=</span><span class="mi">00</span><span class="o">-</span><span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+</pre></div>
+</div>
+</li>
+<li><p>Launch training:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">tmrc</span><span class="o">/</span><span class="n">tmrc_core</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">train</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<section id="configuration">
+<h4>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h4>
+<p>By default, the training script uses the configuration defined in <code class="docutils literal notranslate"><span class="pre">configs/default_train_config.yaml</span></code>.</p>
+<p>To use a custom configuration file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">tmrc</span><span class="o">/</span><span class="n">tmrc_core</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">train</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span><span class="o">-</span><span class="n">name</span> <span class="n">YOUR_CONFIG</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">--config-name</span></code> parameter should be specified without the <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> extension.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Configuration files should be placed in the <code class="docutils literal notranslate"><span class="pre">configs/</span></code> directory. For example, if your config is named <code class="docutils literal notranslate"><span class="pre">my_experiment.yaml</span></code>, use <code class="docutils literal notranslate"><span class="pre">--config-name</span> <span class="pre">my_experiment</span></code></p>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="tmrc: The Kempner LLM Training Codebase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="training_config.html" class="btn btn-neutral float-right" title="Training Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Research and Engineering at Kempner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

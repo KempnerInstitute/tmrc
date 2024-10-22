@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training Configuration &mdash; TMRC  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="tmrc package" href="source/tmrc.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TMRC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Training confirguations</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Training Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dataset-configuration">Dataset Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-configuration">Model Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizer-configuration">Optimizer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tokenizer-configuration">Tokenizer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Training Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#logging-configuration">Logging Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hydra-configuration">Hydra Configuration</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/tmrc.html">tmrc package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">tmrc</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TMRC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Training Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/training_config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="training-configuration">
+<h1>Training Configuration<a class="headerlink" href="#training-configuration" title="Link to this heading"></a></h1>
+<p>The training configuration is managed through a YAML file with several main sections: <code class="docutils literal notranslate"><span class="pre">datasets</span></code>, <code class="docutils literal notranslate"><span class="pre">model</span></code>, <code class="docutils literal notranslate"><span class="pre">optimizer</span></code>, <code class="docutils literal notranslate"><span class="pre">tokenizer</span></code>, <code class="docutils literal notranslate"><span class="pre">training</span></code>, and logging settings.</p>
+<section id="dataset-configuration">
+<h2>Dataset Configuration<a class="headerlink" href="#dataset-configuration" title="Link to this heading"></a></h2>
+<p>Configuration related to input data and tokenization.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">datasets</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">algebraic-stack</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/path/to/data&quot;</span>
+<span class="w">  </span><span class="nt">tokenizer_used</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t5-base</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Name of the dataset being used (that was tokenized by the <code class="docutils literal notranslate"><span class="pre">tatm</span></code> package)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">path</span></code>: File system path to the tokenized dataset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tokenizer_used</span></code>: The tokenizer that was used to preprocess the data</p></li>
+</ul>
+</section>
+<section id="model-configuration">
+<h2>Model Configuration<a class="headerlink" href="#model-configuration" title="Link to this heading"></a></h2>
+<p>Parameters that define the model architecture.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">model</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gpt</span>
+<span class="w">  </span><span class="nt">n_head</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">d_model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512</span>
+<span class="w">  </span><span class="nt">n_layer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">  </span><span class="nt">dropout_p</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
+<span class="w">  </span><span class="nt">context_length</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">512</span>
+<span class="w">  </span><span class="nt">autocast_precision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bfloat16</span>
+<span class="w">  </span><span class="nt">flash</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">  </span><span class="nt">flex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">mlp_scale_factor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">mlp_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">attn_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">  </span><span class="nt">proj_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">ln_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">cls_head_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">activation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">relu</span>
+<span class="w">  </span><span class="nt">mask</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">causal_document</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Model architecture type (currently supports ‘gpt’)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_head</span></code>: Number of attention heads</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d_model</span></code>: Hidden dimension size</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_layer</span></code>: Number of transformer layers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dropout_p</span></code>: Dropout probability (0.0 means no dropout)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context_length</span></code>: Maximum sequence length for input tokens</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">autocast_precision</span></code>: Precision for automatic mixed precision training (options: <code class="docutils literal notranslate"><span class="pre">float32</span></code>, <code class="docutils literal notranslate"><span class="pre">float16</span></code>, <code class="docutils literal notranslate"><span class="pre">bfloat16</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flash</span></code>: Whether to use Flash Attention for faster computation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">flex</span></code>: Whether to use Flex Attention (cannot be used with Flash Attention)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mlp_scale_factor</span></code>: Multiplier for MLP hidden dimension relative to <code class="docutils literal notranslate"><span class="pre">d_model</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mlp_bias</span></code>: Include bias terms in MLP layers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">attn_bias</span></code>: Include bias terms in attention computation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">proj_bias</span></code>: Include bias terms in projection layers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ln_bias</span></code>: Include bias terms in layer normalization</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cls_head_bias</span></code>: Include bias terms in classification head</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">activation</span></code>: Activation function (options: <code class="docutils literal notranslate"><span class="pre">relu</span></code>, <code class="docutils literal notranslate"><span class="pre">gelu</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code>: Attention mask type (e.g., <code class="docutils literal notranslate"><span class="pre">causal_document</span></code> to use causal attention + document masking).  If document masking is used, this requires Flex Attention to be enabled.</p></li>
+</ul>
+</section>
+<section id="optimizer-configuration">
+<h2>Optimizer Configuration<a class="headerlink" href="#optimizer-configuration" title="Link to this heading"></a></h2>
+<p>Parameters for the optimization algorithm.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">optimizer</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AdamW</span>
+<span class="w">  </span><span class="nt">lr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0001</span>
+<span class="w">  </span><span class="nt">weight_decay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.01</span>
+<span class="w">  </span><span class="nt">betas</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.999</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">eps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1e-8</span>
+<span class="w">  </span><span class="nt">precision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">float32</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Optimizer type (currently supports ‘AdamW’)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lr</span></code>: Learning rate</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weight_decay</span></code>: L2 regularization factor</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">betas</span></code>: Beta parameters for AdamW [β1, β2]</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">eps</span></code>: Epsilon parameter for numerical stability</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">precision</span></code>: Optimizer state precision</p></li>
+</ul>
+</section>
+<section id="tokenizer-configuration">
+<h2>Tokenizer Configuration<a class="headerlink" href="#tokenizer-configuration" title="Link to this heading"></a></h2>
+<p>Settings for the tokenizer.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">tokenizer</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t5-base</span>
+<span class="w">  </span><span class="nt">vocab_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">32128</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Name of the pretrained tokenizer</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vocab_size</span></code>: Size of the vocabulary</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Training Configuration<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>Parameters controlling the training process.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">training</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">epochs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">train_steps</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100000</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span>
+<span class="w">  </span><span class="nt">log_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">save_model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">  </span><span class="nt">save_every</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3600</span>
+<span class="w">  </span><span class="nt">artifacts_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/artifacts</span>
+<span class="w">  </span><span class="nt">use_oracle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">epochs</span></code>: Number of training epochs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">train_steps</span></code>: Maximum number of training steps (training stops at whichever comes first: epochs or train_steps)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>: Size of training batches</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_interval</span></code>: Number of steps between logging updates</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code>: Whether to shuffle the dataset between epochs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_model</span></code>: Whether to save model checkpoints</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_every</span></code>: Checkpoint saving frequency in seconds (3600 = once an hour)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">artifacts_path</span></code>: Directory to save model checkpoints and other artifacts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_oracle</span></code>: Enable oracle mode for debugging/testing</p></li>
+</ul>
+</section>
+<section id="logging-configuration">
+<h2>Logging Configuration<a class="headerlink" href="#logging-configuration" title="Link to this heading"></a></h2>
+<p>Settings for experiment tracking.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">wandb_log</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tmrc_log</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: Run name for Weights &amp; Biases logging</p></li>
+</ul>
+</section>
+<section id="hydra-configuration">
+<h2>Hydra Configuration<a class="headerlink" href="#hydra-configuration" title="Link to this heading"></a></h2>
+<p>Settings for Hydra configuration management.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">HydraConf</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">version_base</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.1&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">version_base</span></code>: Hydra version compatibility setting</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="source/tmrc.html" class="btn btn-neutral float-right" title="tmrc package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Research and Engineering at Kempner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
