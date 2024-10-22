@@ -1,10 +1,10 @@
 Training Configuration
-==================
+======================
 
 The training configuration is managed through a YAML file with several main sections: ``datasets``, ``model``, ``optimizer``, ``tokenizer``, ``training``, and logging settings.
 
 Dataset Configuration
-------------------
+---------------------
 Configuration related to input data and tokenization.
 
 .. code-block:: yaml
@@ -19,7 +19,7 @@ Configuration related to input data and tokenization.
 * ``tokenizer_used``: The tokenizer that was used to preprocess the data
 
 Model Configuration
-----------------
+-------------------
 Parameters that define the model architecture.
 
 .. code-block:: yaml
@@ -62,7 +62,7 @@ Parameters that define the model architecture.
 * ``mask``: Attention mask type (e.g., ``causal_document`` to use causal attention + document masking).  If document masking is used, this requires Flex Attention to be enabled.
 
 Optimizer Configuration
---------------------
+-----------------------
 Parameters for the optimization algorithm.
 
 .. code-block:: yaml
@@ -83,7 +83,7 @@ Parameters for the optimization algorithm.
 * ``precision``: Optimizer state precision
 
 Tokenizer Configuration
---------------------
+-----------------------
 Settings for the tokenizer.
 
 .. code-block:: yaml
@@ -96,7 +96,7 @@ Settings for the tokenizer.
 * ``vocab_size``: Size of the vocabulary
 
 Training Configuration
--------------------
+----------------------
 Parameters controlling the training process.
 
 .. code-block:: yaml
@@ -123,7 +123,7 @@ Parameters controlling the training process.
 * ``use_oracle``: Enable oracle mode for debugging/testing
 
 Logging Configuration
-------------------
+---------------------
 Settings for experiment tracking.
 
 .. code-block:: yaml
@@ -134,7 +134,7 @@ Settings for experiment tracking.
 * ``name``: Run name for Weights & Biases logging
 
 Hydra Configuration
-----------------
+-------------------
 Settings for Hydra configuration management.
 
 .. code-block:: yaml
