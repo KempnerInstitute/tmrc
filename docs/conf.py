@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 
 # Configuration file for the Sphinx documentation builder.
@@ -12,8 +12,8 @@ sys.path.insert(0, os.path.abspath('../../src'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'TMRC'
-copyright = '2024, Research and Engineering at Kempner'
-author = 'Research and Engineering at Kempner'
+copyright = '2024,  Kempner Institute at Harvard University'
+author = 'Research and Engineering at Kempner Institute at Harvard University'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -38,6 +38,3 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'sphinx_rtd_theme'  # Use the Read the Docs theme
 
 html_static_path = ['_static']
-
-
-sys.path.insert(0, os.path.abspath('../../src/your_package_name'))
