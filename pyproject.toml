@@ -45,5 +45,10 @@ docs = [
     "sphinx",
     "sphinx-rtd-theme",
     "sphinxcontrib-napoleon",
-    "myst-parser"
+    "myst-parser",
+    "nbsphinx",
+    "recommonmark",
+    "sphinx-copybutton",
+    "sphinxcontrib-bibtex",
+
 ]
