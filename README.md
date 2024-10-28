@@ -68,11 +68,11 @@ To use a custom configuration file
 
     python src/tmrc/tmrc_core/training/train.py --config-name YOUR_CONFIG
 
-[!NOTE]
-The ``--config-name`` parameter should be specified without the ``.yaml`` extension.
+> [!NOTE]
+> The ``--config-name`` parameter should be specified without the ``.yaml`` extension.
 
-[!TIP]
-Configuration files should be placed in the ``configs/`` directory. For example, if your config is named ``my_experiment.yaml``, use ``--config-name my_experiment``
+> [!TIP]
+> Configuration files should be placed in the ``configs/`` directory. For example, if your config is named ``my_experiment.yaml``, use ``--config-name my_experiment``
 
 ## Build the documentation locally
 
