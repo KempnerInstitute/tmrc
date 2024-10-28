@@ -12,9 +12,11 @@
 </p>
 
 
-# tmrc
+# TMRC
 
 _Transformer model research codebase_
+
+[TMRC Documentation](https://symmetrical-couscous-g63ee4k.pages.github.io/)
 
 
 ## Installation 
