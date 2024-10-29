@@ -35,9 +35,23 @@ More details about ``tatm`` can be found `here <https://github.com/KempnerInstit
 Installation Steps
 ~~~~~~~~~~~~~~~~~~
 
-1. Clone and install the package::
+1. Load required modules::
 
-    git clone https://github.com/KempnerInstitute/tmrc.git
+    module load python/3.12.5-fasrc01
+    module load cuda/12.4.1-fasrc01
+    module load cudnn/9.1.1.17_cuda12-fasrc01 
+
+2. Create a Conda environment::
+
+    conda create -n tmrc_env python=3.10
+    conda activate tmrc_env
+
+3. Clone the repository::
+
+    git clone git@github.com:KempnerInstitute/tmrc.git
+
+4. Install the package in editable mode::
+
     cd tmrc
     pip install -e .
 
