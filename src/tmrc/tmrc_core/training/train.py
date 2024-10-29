@@ -64,6 +64,7 @@ def train(config: DictConfig):
     # Training loop
     try:
         steps_done = 0
+        start = None
         for epoch in range(config.training.epochs):
             model.train()
             
@@ -91,6 +92,10 @@ def train(config: DictConfig):
                 
                 # Logging
                 if batch_idx % config.training.log_interval == 0:
+                    if start is not None:
+                        end = time.time()
+                        print(end - start)
+                    start = time.time()
                     print(f"@ batch index {batch_idx}, train loss: {loss:.4f}")
                     wandb.log({
                         "train_loss": loss.item(),

@@ -83,7 +83,7 @@ class GPT(nn.Module):
 
         if self.uses_flex:
             created_block_mask = create_block_mask(self.block_mask_fn(doc_ids), \
-                                               None, None, x.shape[-1], x.shape[-1], _compile=True, device=self.platform.get_device_str())
+                                               x.shape[0], None, x.shape[-1], x.shape[-1], _compile=True, device=self.platform.get_device_str())
         else:
             created_block_mask = None
         
