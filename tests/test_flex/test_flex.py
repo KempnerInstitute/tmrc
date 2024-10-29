@@ -94,7 +94,7 @@ def test_mask(sample_dataset):
         document_mask = doc_mask[b, q_idx] == doc_mask[b,kv_idx]
         return causal_mask & document_mask
 
-    block_mask = create_block_mask(document_causal_mask, None, None, x.shape[-1], x.shape[-1], device=device)
+    block_mask = create_block_mask(document_causal_mask, x.shape[0], None, x.shape[-1], x.shape[-1], device=device)
     assert isinstance(block_mask, BlockMask)
 
     # batch size
