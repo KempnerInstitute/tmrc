@@ -19,6 +19,7 @@ model:
   flash: False
   flex: True
   mask: causal_document
+  compile: False
 
 optimizer:
   name: AdamW

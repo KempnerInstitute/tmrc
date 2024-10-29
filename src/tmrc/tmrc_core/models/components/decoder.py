@@ -28,7 +28,7 @@ class CausalSelfAttention(nn.Module):
         self.flash = config.model.flash #hasattr(torch.nn.functional, 'scaled_dot_product_attention')
         self.flex = config.model.flex
 
-        if self.flex:
+        if self.flex and config.model.compile:
             self.flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)
         if not (self.flash or self.flex):
             print("Warning: flash attention not found (torch >= 2.0)")
