@@ -125,6 +125,11 @@ def train(config: DictConfig):
                             _, loss = model(x, y, doc_ids)
                             val_losses.append(loss.item())
                             print(f"validation loss: {loss:.4f}")
+                            wandb.log({
+                                "val_loss": loss.item(),
+                                "epoch": epoch,
+                                "step": steps_done
+                            })
 
                 if steps_done >= config.training.train_steps:
                     break
