@@ -34,7 +34,7 @@ def create_dataloaders(config):
         val_dataset,
         batch_size=config.training.batch_size,
         shuffle=False,
-        num_workers=2,
+        num_workers=4,
         pin_memory=True,
         collate_fn=torch_collate_fn
     )

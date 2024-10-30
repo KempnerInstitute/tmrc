@@ -28,7 +28,7 @@ class CausalSelfAttention(nn.Module):
         self.flash = config.model.flash #hasattr(torch.nn.functional, 'scaled_dot_product_attention')
         self.flex = config.model.flex
 
-        self.compile = config.model.compile
+        self.compile = config.model.compile_flex
 
         if self.flex and self.compile:
             self.flex_attention = torch.compile(torch.nn.attention.flex_attention.flex_attention, dynamic=False)

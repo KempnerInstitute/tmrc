@@ -26,7 +26,7 @@ For dataset loading, we currently use the ``tatm`` package also developed at the
 
     pip install git+https://github.com/KempnerInstitute/tatm.git
 
-More details about ``tatm`` can be found `here <https://github.com/KempnerInstitute/tatm/tree/dev>`_ 
+More details about ``tatm`` can be found `here <https://github.com/KempnerInstitute/tatm/tree/dev>`_.
 
 .. note::
     In future versions, we will support default dataset loading without requiring external packages.
@@ -35,13 +35,19 @@ More details about ``tatm`` can be found `here <https://github.com/KempnerInstit
 Installation Steps
 ~~~~~~~~~~~~~~~~~~
 
-1. Load required modules::
+1. If you are using the Kempner AI cluster, load required modules::
 
     module load python/3.12.5-fasrc01
     module load cuda/12.4.1-fasrc01
-    module load cudnn/9.1.1.17_cuda12-fasrc01 
+    module load cudnn/9.1.1.17_cuda12-fasrc01
 
-2. Create a Conda environment::
+    If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the `PyTorch website`_.
+
+    .. _PyTorch website: https://pytorch.org
+
+    TMRC has been tested with torch ``2.5.0+cu124``.
+
+2. Create a Conda environment (if you are using the Kempner AI cluster, you may use ``mamba`` instead of ``conda``)::
 
     conda create -n tmrc_env python=3.10
     conda activate tmrc_env
@@ -62,9 +68,11 @@ Running Experiments
 
     wandb login
 
-2. Request compute resources. For example, to request an H100 GPU::
+2. Request compute resources. For example, on the Kempner AI cluster, to request an H100 GPU::
 
     salloc --partition=kempner_h100 --account=<your FASRC account> --ntasks=1 --cpus-per-task=8 --mem=8G --gres=gpu:1  --time=00-02:00:00
+
+If you are not using the Kempner AI cluster, you can run experiments on your local machine (if you have a GPU) or on cloud services like AWS, GCP, or Azure.  TMRC should automatically find the available GPU.
 
 3. Launch training::
 
@@ -73,7 +81,7 @@ Running Experiments
 Configuration
 ^^^^^^^^^^^^^
 
-By default, the training script uses the configuration defined in ``configs/default_train_config.yaml``. 
+By default, the training script uses the configuration defined in ``configs/training/default_train_config.yaml``. 
 
 To use a custom configuration file::
 

@@ -24,7 +24,7 @@ model:
   cls_head_bias: True
   activation: relu
   mask: causal_document
-  compile: True
+  compile_flex: True
 
 optimizer:
   name: AdamW
@@ -44,10 +44,11 @@ training:
   train_steps: 100000 # do whatever is smaller, train_steps or epoch
   batch_size: 256
   log_interval: 20
+  val_interval: 500
   shuffle: True
   save_model: True
   save_every: 3600 # in seconds (saves state every hour)
-  artifacts_path: /n/home01/nikhilanand/scratch/tmrc_dev_artifacts
+  artifacts_path: tmrc_dev_artifacts
   use_oracle: False
 
 wandb_log:

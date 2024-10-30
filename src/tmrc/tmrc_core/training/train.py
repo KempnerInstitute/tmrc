@@ -4,11 +4,7 @@ import hydra
 import os
 import threading
 import time
-from torch.utils.data import DataLoader, Dataset, random_split
-from omegaconf import DictConfig
-from pathlib import Path
-from typing import Tuple, Optional
-import numpy as np
+from omegaconf import DictConfig, OmegaConf
 import argparse
 
 from tmrc.tmrc_core.models import gpt
@@ -38,7 +34,7 @@ def print_model_info(model):
 def train(config: DictConfig):
     # Initialize wandb
     init_wandb(config)
-    print(config)
+    print(OmegaConf.to_yaml(config))
     
     # Initialize platform and model
     platform = Platform()
@@ -60,7 +56,8 @@ def train(config: DictConfig):
         eps=config.optimizer.eps,
         weight_decay=config.optimizer.weight_decay
     )
-    
+    scaler = torch.amp.GradScaler(device=platform.get_device_str())
+
     # Training loop
     try:
         steps_done = 0
@@ -72,12 +69,11 @@ def train(config: DictConfig):
                 tok_ids = sample.get("token_ids").long()
                 doc_ids = sample.get("document_ids").long()
 
-                x = tok_ids
-                y = torch.roll(x, shifts=-1, dims=1)
+                y = torch.roll(tok_ids, shifts=-1, dims=1)
                 y[:, -1] = -100 
 
                 if platform.is_gpu:
-                    x = platform.move_to_device(x, device_index=0)
+                    x = platform.move_to_device(tok_ids, device_index=0)
                     y = platform.move_to_device(y, device_index=0)
                     doc_ids = platform.move_to_device(doc_ids, device_index=0)
                 
@@ -87,14 +83,15 @@ def train(config: DictConfig):
                                   dtype=getattr(torch, config.model.autocast_precision)):
                     _, loss = model(x, y, doc_ids)
                 
-                loss.backward()
-                optimizer.step()
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
                 
                 # Logging
                 if batch_idx % config.training.log_interval == 0:
                     if start is not None:
                         end = time.time()
-                        print(end - start)
+                        print(f"Time to process: {(end - start):.2f} seconds")
                     start = time.time()
                     print(f"@ batch index {batch_idx}, train loss: {loss:.4f}")
                     wandb.log({
@@ -104,25 +101,27 @@ def train(config: DictConfig):
                     })
                 
                 steps_done += 1
+            
+                # validation
+                if steps_done % config.training.val_interval == 0:
+                    model.eval()
+                    val_losses = []
+                    with torch.no_grad():
+                        for sample in val_loader:
+                            tok_ids = sample.get("token_ids").long()
+                            x = tok_ids[:, :-1]  # Input (B, T-1)
+                            y = tok_ids[:, 1:]  # Labels (B, T-1)
+
+                            if platform.is_gpu:
+                                x = platform.move_to_device(x, device_index=0)
+                                y = platform.move_to_device(y, device_index=0)
+                            
+                            _, loss = model(x, y)
+                            val_losses.append(loss.item())
+                            print(f"validation loss: {loss:.4f}")
+
                 if steps_done >= config.training.train_steps:
                     break
-            
-            # Validation
-            model.eval()
-            val_losses = []
-            with torch.no_grad():
-                for sample in val_loader:
-                    tok_ids = sample.get("token_ids").long()
-                    x = tok_ids[:, :-1]  # Input (B, T-1)
-                    y = tok_ids[:, 1:]  # Labels (B, T-1)
-
-                    if platform.is_gpu:
-                        x = platform.move_to_device(x, device_index=0)
-                        y = platform.move_to_device(y, device_index=0)
-                    
-                    _, loss = model(x, y)
-                    val_losses.append(loss.item())
-                    print(f"Validation loss: {loss:.4f}")
             
             avg_val_loss = sum(val_losses) / len(val_losses)
             wandb.log({
@@ -136,6 +135,8 @@ def train(config: DictConfig):
     finally:
         # Cleanup
         if config.training.save_model:
+            # create directory if it doesn't exist
+            os.makedirs(config.training.artifacts_path, exist_ok=True)
             final_save_path = os.path.join(config.training.artifacts_path, "model_final.pt")
             torch.save(model.state_dict(), final_save_path)
 
