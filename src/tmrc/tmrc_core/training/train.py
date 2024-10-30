@@ -76,12 +76,15 @@ def train(config: DictConfig):
                     x = platform.move_to_device(tok_ids, device_index=0)
                     y = platform.move_to_device(y, device_index=0)
                     doc_ids = platform.move_to_device(doc_ids, device_index=0)
+                else:
+                    x = tok_ids
+
                 
                 optimizer.zero_grad()
                 
                 with torch.autocast(device_type=platform.get_device_str(), 
                                   dtype=getattr(torch, config.model.autocast_precision)):
-                    _, loss = model(x, y, doc_ids)
+                      _, loss = model(x, y, doc_ids)
                 
                 scaler.scale(loss).backward()
                 scaler.step(optimizer)
@@ -109,14 +112,17 @@ def train(config: DictConfig):
                     with torch.no_grad():
                         for sample in val_loader:
                             tok_ids = sample.get("token_ids").long()
-                            x = tok_ids[:, :-1]  # Input (B, T-1)
-                            y = tok_ids[:, 1:]  # Labels (B, T-1)
+                            y = torch.roll(tok_ids, shifts=-1, dims=1)
+                            y[:, -1] = -100 
 
                             if platform.is_gpu:
-                                x = platform.move_to_device(x, device_index=0)
+                                x = platform.move_to_device(tok_ids, device_index=0)
                                 y = platform.move_to_device(y, device_index=0)
+                                doc_ids = platform.move_to_device(doc_ids, device_index=0)
+                            else:
+                                x = tok_ids
                             
-                            _, loss = model(x, y)
+                            _, loss = model(x, y, doc_ids)
                             val_losses.append(loss.item())
                             print(f"validation loss: {loss:.4f}")
 

@@ -10,16 +10,17 @@ from tatm.data import get_dataset, torch_collate_fn
 
 
 def create_dataloaders(config):
+    """
+    Note: until `tatm` supports validation set, we will use the first `config.training.batch_size` samples as validation set
+     - [TODO] implement proper validation set
+     - [TODO] more data checks to validate batch sizes, document ids, etc. are consistent across all batches
+    """
     full_dataset = get_dataset(config.datasets.path, context_length = config.model.context_length)
 
     print(f"Dataset length: {len(full_dataset)}")
 
-    #save last 5% for validation
-    val_size = int(len(full_dataset) * 0.01)
 
-    print(f"Validation size: {val_size}")
-    #train_dataset = [full_dataset[d] for d in range(len(full_dataset)) if d < len(full_dataset)-val_size]
-    val_dataset = [full_dataset[d] for d in range(10)]
+    val_dataset = [full_dataset[d] for d in range(config.training.batch_size)]
 
     print("Creating dataloaders")
     train_loader = DataLoader(
