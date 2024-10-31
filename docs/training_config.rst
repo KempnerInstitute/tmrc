@@ -42,6 +42,7 @@ Parameters that define the model architecture.
       cls_head_bias: True
       activation: relu
       mask: causal_document
+      compile_flex: True
 
 * ``name``: Model architecture type (currently supports 'gpt')
 * ``n_head``: Number of attention heads
@@ -60,6 +61,7 @@ Parameters that define the model architecture.
 * ``cls_head_bias``: Include bias terms in classification head
 * ``activation``: Activation function (options: ``relu``, ``gelu``)
 * ``mask``: Attention mask type (e.g., ``causal_document`` to use causal attention + document masking).  If document masking is used, this requires Flex Attention to be enabled.
+* ``compile_flex``: Whether to compile Flex Attention (see `Flex Attention <https://pytorch.org/blog/flexattention>`_)
 
 Optimizer Configuration
 -----------------------

@@ -21,16 +21,20 @@ TMRC (Transformer Model Research Codebase) is a simple, explainable codebase to 
 [TMRC Documentation](https://symmetrical-couscous-g63ee4k.pages.github.io/)
 
 
-## Installation 
-
+## Installation
 
 - Step 1: Load required modules
+
+If you are using the Kempner AI cluster, load required modules::
 
 ```bash
 module load python/3.12.5-fasrc01
 module load cuda/12.4.1-fasrc01
 module load cudnn/9.1.1.17_cuda12-fasrc01 
 ```
+
+If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the [PyTorch website](https://pytorch.org). TMRC has been tested with torch ``2.5.0+cu124`` and Python 3.12.
+
 
 - Step 2: Create a Conda environment
 
@@ -54,15 +58,23 @@ pip install -e .
 
 - Step 1: Login to Weights & Biases to enable experiment tracking
 
-    wandb login
+  ```bash
+  wandb login
+  ```
 
-- Step 2: Request compute resources. For example, to request an H100 GPU
+- Step 2: Request compute resources. For example, on the Kempner cluster, to request an H100 GPU run
 
-    salloc --partition=kempner_h100 --account=<your FASRC account> --ntasks=1 --cpus-per-task=8 --mem=8G --gres=gpu:1  --time=00-02:00:00
+  ```bash
+  salloc --partition=kempner_h100 --account=<your FASRC account> --ntasks=1 --cpus-per-task=8 --mem=8G --gres=gpu:1  --time=00-02:00:00
+  ```
+
+  If you are not using the Kempner AI cluster, you can run experiments on your local machine (if you have a GPU) or on cloud services like AWS, GCP, or Azure.  TMRC should automatically find the available GPU.  If there are no GPUs available, it will run on CPU (though this is not recommended, since training will be prohibitively slow for any reasonable model size).
 
 - Step 3: Launch training
 
-    python src/tmrc/tmrc_core/training/train.py
+  ```bash
+  python src/tmrc/tmrc_core/training/train.py
+  ```
 
 ### Configuration
 
