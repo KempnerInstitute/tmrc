@@ -41,11 +41,9 @@ Installation Steps
     module load cuda/12.4.1-fasrc01
     module load cudnn/9.1.1.17_cuda12-fasrc01
 
-    If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the `PyTorch website`_.
+If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the `PyTorch website <https://pytorch.org>`_.
 
-    .. _PyTorch website: https://pytorch.org
-
-    TMRC has been tested with torch ``2.5.0+cu124``.
+TMRC has been tested with torch ``2.5.0+cu124``.
 
 2. Create a Conda environment (if you are using the Kempner AI cluster, you may use ``mamba`` instead of ``conda``)::
 

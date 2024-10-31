@@ -128,6 +128,7 @@
 <span class="w">  </span><span class="nt">cls_head_bias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
 <span class="w">  </span><span class="nt">activation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">relu</span>
 <span class="w">  </span><span class="nt">mask</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">causal_document</span>
+<span class="w">  </span><span class="nt">compile_flex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -148,6 +149,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">cls_head_bias</span></code>: Include bias terms in classification head</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">activation</span></code>: Activation function (options: <code class="docutils literal notranslate"><span class="pre">relu</span></code>, <code class="docutils literal notranslate"><span class="pre">gelu</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code>: Attention mask type (e.g., <code class="docutils literal notranslate"><span class="pre">causal_document</span></code> to use causal attention + document masking).  If document masking is used, this requires Flex Attention to be enabled.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compile_flex</span></code>: Whether to compile Flex Attention (see <a class="reference external" href="https://pytorch.org/blog/flexattention">Flex Attention</a>)</p></li>
 </ul>
 </section>
 <section id="optimizer-configuration">

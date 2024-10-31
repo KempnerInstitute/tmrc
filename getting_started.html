@@ -126,18 +126,16 @@
 <h3>Installation Steps<a class="headerlink" href="#installation-steps" title="Link to this heading"></a></h3>
 <ol class="arabic">
 <li><p>If you are using the Kempner AI cluster, load required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>module load python/3.12.5-fasrc01
-module load cuda/12.4.1-fasrc01
-module load cudnn/9.1.1.17_cuda12-fasrc01
-
-If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the `PyTorch website`_.
-
-.. _PyTorch website: https://pytorch.org
-
-TMRC has been tested with torch ``2.5.0+cu124``.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">module</span> <span class="n">load</span> <span class="n">python</span><span class="o">/</span><span class="mf">3.12.5</span><span class="o">-</span><span class="n">fasrc01</span>
+<span class="n">module</span> <span class="n">load</span> <span class="n">cuda</span><span class="o">/</span><span class="mf">12.4.1</span><span class="o">-</span><span class="n">fasrc01</span>
+<span class="n">module</span> <span class="n">load</span> <span class="n">cudnn</span><span class="o">/</span><span class="mf">9.1.1.17</span><span class="n">_cuda12</span><span class="o">-</span><span class="n">fasrc01</span>
 </pre></div>
 </div>
 </li>
+</ol>
+<p>If you are not using the Kempner cluster, install torch and cuda dependencies following instructions on the <a class="reference external" href="https://pytorch.org">PyTorch website</a>.</p>
+<p>TMRC has been tested with torch <code class="docutils literal notranslate"><span class="pre">2.5.0+cu124</span></code>.</p>
+<ol class="arabic" start="2">
 <li><p>Create a Conda environment (if you are using the Kempner AI cluster, you may use <code class="docutils literal notranslate"><span class="pre">mamba</span></code> instead of <code class="docutils literal notranslate"><span class="pre">conda</span></code>):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">-</span><span class="n">n</span> <span class="n">tmrc_env</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.10</span>
 <span class="n">conda</span> <span class="n">activate</span> <span class="n">tmrc_env</span>
