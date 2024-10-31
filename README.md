@@ -16,6 +16,8 @@
 
 _Transformer model research codebase_
 
+TMRC (Transformer Model Research Codebase) is a simple, explainable codebase to train transformer-based models. It was developed with simplicity and ease of modification in mind, particularly for researchers. The codebase will eventually be used to train foundation models and experiment with architectural and training modifications.  This code is currently still in development and currently supports single GPU use-cases; we plan to scale to multi-GPU and multimodal settings in the near future.
+
 [TMRC Documentation](https://symmetrical-couscous-g63ee4k.pages.github.io/)
 
 

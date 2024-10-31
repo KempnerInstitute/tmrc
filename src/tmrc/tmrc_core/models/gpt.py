@@ -78,7 +78,8 @@ class GPT(nn.Module):
         assert T <= self.config.model.context_length, f"Sequence length {T} > context length {self.config.model.context_length}"
 
         tok_emb = self.transformer.wte(idx) # (B, T, C)
-        pos_emb = self.transformer.wpe(self.arange_T) # (B, T, C)
+        pos_emb = self.transformer.wpe(self.arange_T[:T]) # (B, T, C)
+
         x = tok_emb + pos_emb
 
         if self.uses_flex:

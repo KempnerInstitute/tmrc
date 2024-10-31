@@ -171,3 +171,6 @@ outputs/
 
 #wandb
 wandb/
+
+#artifacts
+tmrc_dev_artifacts/
