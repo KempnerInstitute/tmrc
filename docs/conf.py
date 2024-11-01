@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 project = 'TMRC'
 copyright = '2024,  Kempner Institute at Harvard University'
-author = 'Research and Engineering at Kempner Institute at Harvard University'
+author = 'Research and Engineering Team at Kempner Institute at Harvard University'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
