@@ -10,7 +10,7 @@ Requirements
 The following packages are required:
 
 * ``PyTorch``: Deep learning framework
-* ``Weights & Biases``: Experiment tracking
+* ``wandb``: Weights & Biases experiment tracking
 * ``Hydra``: Configuration management
 * ``NumPy``: Numerical computing
 * ``tatm``: Dataset loading support
@@ -68,7 +68,7 @@ Running Experiments
 
 2. Request compute resources. For example, on the Kempner AI cluster, to request an H100 GPU::
 
-    salloc --partition=kempner_h100 --account=<your FASRC account> --ntasks=1 --cpus-per-task=8 --mem=8G --gres=gpu:1  --time=00-02:00:00
+    salloc --partition=kempner_h100 --account=<fairshare account> --ntasks=1 --cpus-per-task=24 --mem=375G --gres=gpu:1  --time=00-07:00:00
 
 If you are not using the Kempner AI cluster, you can run experiments on your local machine (if you have a GPU) or on cloud services like AWS, GCP, or Azure.  TMRC should automatically find the available GPU.
 
@@ -89,4 +89,4 @@ To use a custom configuration file::
     The ``--config-name`` parameter should be specified without the ``.yaml`` extension.
 
 .. tip::
-    Configuration files should be placed in the ``configs/`` directory. For example, if your config is named ``my_experiment.yaml``, use ``--config-name my_experiment``
+    Configuration files should be placed in the ``configs/training/`` directory. For example, if your config is named ``my_experiment.yaml``, use ``--config-name my_experiment``

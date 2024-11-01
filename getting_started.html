@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Training Configuration" href="training_config.html" />
-    <link rel="prev" title="tmrc: The Kempner LLM Training Codebase" href="index.html" /> 
+    <link rel="prev" title="tmrc: The Kempner Transformer Model Research Codebase" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -100,7 +100,7 @@
 <p>The following packages are required:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">PyTorch</span></code>: Deep learning framework</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Weights</span> <span class="pre">&amp;</span> <span class="pre">Biases</span></code>: Experiment tracking</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wandb</span></code>: Weights &amp; Biases experiment tracking</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Hydra</span></code>: Configuration management</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NumPy</span></code>: Numerical computing</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tatm</span></code>: Dataset loading support</p></li>
@@ -164,7 +164,7 @@
 </div>
 </li>
 <li><p>Request compute resources. For example, on the Kempner AI cluster, to request an H100 GPU:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salloc</span> <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">kempner_h100</span> <span class="o">--</span><span class="n">account</span><span class="o">=&lt;</span><span class="n">your</span> <span class="n">FASRC</span> <span class="n">account</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cpus</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">task</span><span class="o">=</span><span class="mi">8</span> <span class="o">--</span><span class="n">mem</span><span class="o">=</span><span class="mi">8</span><span class="n">G</span> <span class="o">--</span><span class="n">gres</span><span class="o">=</span><span class="n">gpu</span><span class="p">:</span><span class="mi">1</span>  <span class="o">--</span><span class="n">time</span><span class="o">=</span><span class="mi">00</span><span class="o">-</span><span class="mi">02</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">salloc</span> <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">kempner_h100</span> <span class="o">--</span><span class="n">account</span><span class="o">=&lt;</span><span class="n">fairshare</span> <span class="n">account</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">ntasks</span><span class="o">=</span><span class="mi">1</span> <span class="o">--</span><span class="n">cpus</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">task</span><span class="o">=</span><span class="mi">24</span> <span class="o">--</span><span class="n">mem</span><span class="o">=</span><span class="mi">375</span><span class="n">G</span> <span class="o">--</span><span class="n">gres</span><span class="o">=</span><span class="n">gpu</span><span class="p">:</span><span class="mi">1</span>  <span class="o">--</span><span class="n">time</span><span class="o">=</span><span class="mi">00</span><span class="o">-</span><span class="mi">07</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>
 </pre></div>
 </div>
 </li>
@@ -190,7 +190,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Configuration files should be placed in the <code class="docutils literal notranslate"><span class="pre">configs/</span></code> directory. For example, if your config is named <code class="docutils literal notranslate"><span class="pre">my_experiment.yaml</span></code>, use <code class="docutils literal notranslate"><span class="pre">--config-name</span> <span class="pre">my_experiment</span></code></p>
+<p>Configuration files should be placed in the <code class="docutils literal notranslate"><span class="pre">configs/training/</span></code> directory. For example, if your config is named <code class="docutils literal notranslate"><span class="pre">my_experiment.yaml</span></code>, use <code class="docutils literal notranslate"><span class="pre">--config-name</span> <span class="pre">my_experiment</span></code></p>
 </div>
 </section>
 </section>
@@ -201,7 +201,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="tmrc: The Kempner LLM Training Codebase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="tmrc: The Kempner Transformer Model Research Codebase" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="training_config.html" class="btn btn-neutral float-right" title="Training Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
