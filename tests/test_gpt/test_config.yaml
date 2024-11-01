@@ -1,0 +1,34 @@
+defaults:
+  - _self_
+
+model:
+  name: gpt
+  n_head: 4
+  d_model: 512
+  n_layer: 4
+  dropout_p: 0.0
+  context_length: 512
+  weight_precision: bfloat16
+  mlp_scale_factor: 4
+  mlp_bias: True
+  attn_bias: False
+  proj_bias: True
+  ln_bias: True
+  cls_head_bias: True
+  activation: relu
+  flash: True
+  flex: False
+  mask: causal_document
+  compile_flex: False
+
+optimizer:
+  name: AdamW
+  lr: 0.0001
+  weight_decay: 0.01
+  betas: [0.9, 0.999]
+  eps: 1e-8
+  precision: float32
+  
+tokenizer:
+  name: t5-base
+  vocab_size: 32128
