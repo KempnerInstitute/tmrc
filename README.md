@@ -98,6 +98,8 @@ To use a custom configuration file
 > [!TIP]
 > Configuration files should be placed in the `configs/training/` directory. For example, if your config is named `my_experiment.yaml`, use `--config-name my_experiment`
 
+Make sure to change the `path` under `datasets` block in the config file. 
+
 ## Build the documentation locally
 
 - Step 1: Install the required packages
